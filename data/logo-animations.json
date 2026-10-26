@@ -1,0 +1,10 @@
+{
+  "presets": [
+    {"id":"spin-in","name":"Spin In","duration":0.8,"easing":"easeOutBack"},
+    {"id":"scale-pop","name":"Scale Pop","duration":0.6,"easing":"easeOutBack"},
+    {"id":"slide-up","name":"Slide Up","duration":0.5,"easing":"easeOutCubic"},
+    {"id":"draw","name":"Draw On","duration":1.2,"easing":"easeInOutCubic","status":"planned"},
+    {"id":"glitch-logo","name":"Glitch Reveal","duration":0.6,"easing":"linear"},
+    {"id":"light-sweep-logo","name":"Light Sweep","duration":0.9,"easing":"easeInOutCubic"}
+  ]
+}

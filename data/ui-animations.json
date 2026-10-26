@@ -1,0 +1,11 @@
+{
+  "presets": [
+    {"id":"modal","name":"Modal Popup","type":"entrance","duration":0.4,"easing":"easeOutBack"},
+    {"id":"notification","name":"Notification Card","type":"entrance","duration":0.5,"easing":"easeOutCubic"},
+    {"id":"toast","name":"Toast Message","type":"entrance","duration":0.4,"easing":"easeOutCubic"},
+    {"id":"progress","name":"Progress Bar","type":"loop","duration":1.5,"easing":"easeInOutCubic"},
+    {"id":"circular","name":"Circular Progress","type":"loop","duration":2,"easing":"easeInOutCubic"},
+    {"id":"chart-bar","name":"Bar Chart","type":"entrance","duration":1.0,"easing":"easeOutCubic"},
+    {"id":"cursor","name":"Cursor Move","type":"motion","duration":0.8,"easing":"easeInOutCubic"}
+  ]
+}

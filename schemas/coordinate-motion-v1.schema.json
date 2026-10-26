@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://ritampaine75-debug.github.io/Video-editor-/schemas/coordinate-motion-v1.schema.json",
+  "title": "Coordinate Motion v1 Project Schema",
+  "type": "object",
+  "required": ["protocol", "metadata", "composition", "scenes", "tracks", "objects"],
+  "properties": {
+    "protocol": {"type": "string", "const": "coordinate-motion-v1"},
+    "metadata": {"type": "object", "required": ["title"], "properties": {"title": {"type": "string"}, "version": {"type": "integer"}, "description": {"type": "string"}, "author": {"type": "string"}, "created": {"type": "string"}}, "additionalProperties": true},
+    "composition": {"type": "object", "required": ["width", "height", "fps", "duration", "background"], "properties": {"width": {"type": "integer"}, "height": {"type": "integer"}, "fps": {"type": "integer"}, "duration": {"type": "number"}, "background": {"type": "string"}}, "additionalProperties": true},
+    "assets": {"type": "array", "items": {"type": "object"}},
+    "scenes": {"type": "array", "items": {"type": "object"}},
+    "tracks": {"type": "array", "items": {"type": "object"}},
+    "objects": {"type": "array", "items": {"type": "object"}},
+    "audio": {"type": "array", "items": {"type": "object"}},
+    "exportSettings": {"type": "object"}
+  },
+  "additionalProperties": true
+}

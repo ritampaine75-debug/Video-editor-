@@ -1,0 +1,78 @@
+{
+  "protocol": "coordinate-motion-v1",
+  "metadata": {"title": "Animated Title - Kinetic Typography", "version": 1, "description": "Bold kinetic title with stagger and glow"},
+  "composition": {"width": 1920, "height": 1080, "fps": 30, "duration": 6, "background": "#0A0A14"},
+  "scenes": [{"id": "scene-01", "name": "Intro", "start": 0, "duration": 6, "background": "#0A0A14"}],
+  "tracks": [
+    {"id": "track-bg", "type": "graphics", "name": "Background", "enabled": true, "locked": false},
+    {"id": "track-title", "type": "text", "name": "Title", "enabled": true, "locked": false},
+    {"id": "track-subtitle", "type": "text", "name": "Subtitle", "enabled": true, "locked": false}
+  ],
+  "objects": [
+    {
+      "id": "bg-gradient",
+      "type": "rect",
+      "trackId": "track-bg",
+      "start": 0,
+      "duration": 6,
+      "properties": {"x": 0, "y": 0, "width": 1920, "height": 1080, "fill": "#0A0A14", "opacity": 1, "rx": 0},
+      "effects": [{"id": "gradient-mesh", "params": {"colors": ["#0A0A14","#1A1A3A","#2D1B69"]}}]
+    },
+    {
+      "id": "main-title",
+      "type": "text",
+      "trackId": "track-title",
+      "start": 0.3,
+      "duration": 5,
+      "properties": {"x": 960, "y": 460, "content": "CREATE SOMETHING", "fontSize": 92, "fontFamily": "Inter, Arial, sans-serif", "fontWeight": 800, "fill": "#FFFFFF", "align": "center", "opacity": 1, "scaleX": 1, "scaleY": 1, "rotation": 0, "letterSpacing": 0},
+      "keyframes": [
+        {"time": 0.3, "properties": {"x": 1800, "opacity": 0, "scaleX": 0.8, "scaleY": 0.8, "rotation": 2}, "easing": "easeOutCubic"},
+        {"time": 1.2, "properties": {"x": 960, "opacity": 1, "scaleX": 1, "scaleY": 1, "rotation": 0}, "easing": "easeOutCubic"},
+        {"time": 4.5, "properties": {"x": 960, "opacity": 1, "scaleX": 1, "scaleY": 1}, "easing": "easeInCubic"},
+        {"time": 5.0, "properties": {"x": -600, "opacity": 0, "scaleX": 0.9, "scaleY": 0.9}, "easing": "easeInCubic"}
+      ],
+      "effects": [{"id":"glow","params":{"blur":12,"color":"rgba(102,126,234,0.35)"}}]
+    },
+    {
+      "id": "accent-title",
+      "type": "text",
+      "trackId": "track-title",
+      "start": 0.6,
+      "duration": 5,
+      "properties": {"x": 960, "y": 580, "content": "EXTRAORDINARY", "fontSize": 92, "fontFamily": "Inter, Arial, sans-serif", "fontWeight": 800, "fill": "#00D9FF", "align": "center", "opacity": 1, "scaleX": 1, "scaleY": 1},
+      "keyframes": [
+        {"time": 0.6, "properties": {"x": -800, "opacity": 0, "scaleX": 0.8}, "easing": "easeOutCubic"},
+        {"time": 1.5, "properties": {"x": 960, "opacity": 1, "scaleX": 1}, "easing": "easeOutCubic"},
+        {"time": 4.6, "properties": {"opacity": 1}, "easing": "linear"},
+        {"time": 5.2, "properties": {"x": 2200, "opacity": 0}, "easing": "easeInCubic"}
+      ]
+    },
+    {
+      "id": "subtitle",
+      "type": "text",
+      "trackId": "track-subtitle",
+      "start": 1.8,
+      "duration": 3,
+      "properties": {"x": 960, "y": 720, "content": "COORDINATE MOTION STUDIO  •  2025", "fontSize": 22, "fontFamily": "Inter, Arial, sans-serif", "fontWeight": 500, "fill": "rgba(255,255,255,0.75)", "align": "center", "opacity": 1, "letterSpacing": 4},
+      "keyframes": [
+        {"time": 1.8, "properties": {"y": 760, "opacity": 0}, "easing": "easeOutCubic"},
+        {"time": 2.4, "properties": {"y": 720, "opacity": 1}, "easing": "easeOutCubic"},
+        {"time": 4.2, "properties": {"y": 720, "opacity": 1}, "easing": "linear"},
+        {"time": 4.8, "properties": {"y": 700, "opacity": 0}, "easing": "easeInQuad"}
+      ]
+    },
+    {
+      "id": "line-accent",
+      "type": "rect",
+      "trackId": "track-subtitle",
+      "start": 1.6,
+      "duration": 3,
+      "properties": {"x": 760, "y": 640, "width": 400, "height": 3, "fill": "#00D9FF", "opacity": 1, "rx": 2},
+      "keyframes": [
+        {"time": 1.6, "properties": {"width": 0, "opacity": 0}, "easing": "easeOutCubic"},
+        {"time": 2.0, "properties": {"width": 400, "opacity": 1}, "easing": "easeOutCubic"}
+      ]
+    }
+  ],
+  "exportSettings": {"format": "webm", "quality": "high", "filename": "animated-title.webm"}
+}

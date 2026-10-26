@@ -1,0 +1,14 @@
+{
+  "protocol":"coordinate-motion-v1",
+  "metadata":{"title":"Kinetic Typography Blast","version":1},
+  "composition":{"width":1920,"height":1080,"fps":30,"duration":7,"background":"#111113"},
+  "scenes":[{"id":"scene-01","name":"Kinetic","start":0,"duration":7,"background":"#111113"}],
+  "tracks":[{"id":"track-text","type":"text","name":"Typography","enabled":true},{"id":"track-shape","type":"shape","name":"Shapes","enabled":true}],
+  "objects":[
+    {"id":"word1","type":"text","trackId":"track-text","start":0.2,"duration":1.2,"properties":{"x":960,"y":400,"content":"THINK","fontSize":140,"fontFamily":"Arial Black","fontWeight":900,"fill":"#FFFFFF","align":"center","opacity":1,"rotation":-2,"scaleX":1},"keyframes":[{"time":0.2,"properties":{"x":-400,"opacity":0,"rotation":-8},"easing":"easeOutCubic"},{"time":0.7,"properties":{"x":960,"opacity":1,"rotation":-2},"easing":"easeOutCubic"},{"time":1.1,"properties":{"x":2200,"opacity":0},"easing":"easeInCubic"}]},
+    {"id":"word2","type":"text","trackId":"track-text","start":1.0,"duration":1.2,"properties":{"x":960,"y":540,"content":"BIGGER","fontSize":140,"fontFamily":"Arial Black","fontWeight":900,"fill":"#FF3B82","align":"center","opacity":1},"keyframes":[{"time":1.0,"properties":{"scaleX":0.2,"scaleY":0.2,"opacity":0},"easing":"easeOutBack"},{"time":1.5,"properties":{"scaleX":1,"scaleY":1,"opacity":1},"easing":"easeOutBack"},{"time":2.0,"properties":{"scaleX":1.6,"opacity":0},"easing":"easeInCubic"}]},
+    {"id":"word3","type":"text","trackId":"track-text","start":1.9,"duration":1.2,"properties":{"x":960,"y":680,"content":"CREATE","fontSize":90,"fontFamily":"Arial Black","fontWeight":900,"fill":"#00E5FF","align":"center","opacity":1,"letterSpacing":12},"keyframes":[{"time":1.9,"properties":{"letterSpacing":40,"opacity":0},"easing":"easeOutCubic"},{"time":2.4,"properties":{"letterSpacing":12,"opacity":1},"easing":"easeOutCubic"},{"time":2.9,"properties":{"y":1400,"opacity":0},"easing":"easeInQuad"}]},
+    {"id":"accent","type":"rect","trackId":"track-shape","start":0.8,"duration":5,"properties":{"x":0,"y":520,"width":1920,"height":6,"fill":"#FF3B82","opacity":0.9,"rx":0},"keyframes":[{"time":0.8,"properties":{"width":0},"easing":"easeInOutCubic"},{"time":1.3,"properties":{"width":1920},"easing":"easeInOutCubic"}]}
+  ],
+  "exportSettings":{"format":"webm","quality":"high"}
+}

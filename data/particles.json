@@ -1,0 +1,9 @@
+{
+  "emitters": [
+    {"id":"confetti","name":"Confetti","count":120,"speed":5,"status":"implemented"},
+    {"id":"rain","name":"Rain","count":80,"speed":4,"status":"implemented"},
+    {"id":"sparkle","name":"Sparkle","count":60,"speed":1.5,"status":"implemented"},
+    {"id":"smoke","name":"Smoke","count":40,"speed":0.8,"status":"planned"},
+    {"id":"fire","name":"Fire Sparks","count":100,"speed":6,"status":"planned"}
+  ]
+}

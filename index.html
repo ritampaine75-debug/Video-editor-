@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="description" content="Coordinate Motion Studio — AI-directed motion graphics editor. Browser-based timeline, keyframes, and local video export.">
+<title>Coordinate Motion Studio — Procedural Motion Graphics</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2300D9FF'/><path d='M8 16h16M16 8v16' stroke='white' stroke-width='2.5' stroke-linecap='round'/></svg>">
+<style>
+:root{--bg:#070A14;--panel:#0F1220;--panel-2:#131735;--muted:#8B93B8;--text:#EAF0FF;--accent:#00D9FF;--accent-2:#7C3AED;--border:rgba(255,255,255,.08);--radius:14px;--success:#10B981;--warn:#F59E0B;--danger:#EF4444}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0;background:var(--bg);color:var(--text);font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;overflow:hidden}
+a{color:var(--accent);text-decoration:none}
+button{font:inherit}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-thumb{background:rgba(255,255,255,.12);border-radius:8px}
+.app{display:flex;flex-direction:column;height:100vh}
+.topbar{height:56px;display:flex;align-items:center;gap:12px;padding:0 14px;background:linear-gradient(180deg,rgba(255,255,255,.06),rgba(255,255,255,0));backdrop-filter:blur(12px);border-bottom:1px solid var(--border);flex-shrink:0}
+.brand{display:flex;align-items:center;gap:10px;font-weight:800;letter-spacing:.04em}
+.logo{width:30px;height:30px;border-radius:8px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:grid;place-items:center;font-weight:900}
+.brand small{font-weight:600;color:var(--muted);letter-spacing:.12em;font-size:10px}
+.presets{display:flex;gap:8px;margin-left:8px}
+.pill{padding:8px 12px;border-radius:999px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);font-size:12px;font-weight:600;cursor:pointer;transition:.15s}
+.pill.active{background:var(--text);color:#0A0A14;border-color:var(--text)}
+.pill:hover{transform:translateY(-1px)}
+.actions{margin-left:auto;display:flex;gap:8px;align-items:center}
+.btn{padding:9px 12px;border-radius:10px;border:1px solid var(--border);background:rgba(255,255,255,.06);color:var(--text);font-weight:600;font-size:13px;cursor:pointer;display:inline-flex;align-items:center;gap:8px;transition:.15s}
+.btn:hover{background:rgba(255,255,255,.1)}
+.btn.primary{background:var(--accent);color:#041018;border-color:transparent;font-weight:800}
+.btn.primary:hover{filter:brightness(1.05)}
+.btn.ghost{background:transparent}
+.btn.small{padding:6px 9px;font-size:12px;border-radius:8px}
+.btn:disabled{opacity:.45;pointer-events:none}
+.badge{padding:4px 8px;border-radius:999px;background:rgba(0,217,255,.15);color:var(--accent);font-size:11px;font-weight:700;letter-spacing:.06em}
+.layout{display:flex;flex:1;min-height:0}
+.sidebar{width:300px;background:var(--panel);border-right:1px solid var(--border);display:flex;flex-direction:column;min-width:260px}
+.sidebar-tabs{display:flex;gap:6px;padding:10px;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.tab{padding:8px 10px;border-radius:10px;background:rgba(255,255,255,.06);border:1px solid transparent;color:var(--muted);font-size:12px;font-weight:700;cursor:pointer}
+.tab.active{background:var(--text);color:#0A0A14}
+.panel{flex:1;overflow:auto;padding:12px}
+.panel-section{margin-bottom:16px;background:rgba(255,255,255,.04);border:1px solid var(--border);border-radius:12px;padding:12px}
+.panel-section h4{margin:0 0 8px;font-size:11px;letter-spacing:.12em;color:var(--muted);text-transform:uppercase}
+.row{display:flex;gap:8px;margin-bottom:8px}
+.row label{flex:1;font-size:12px;color:var(--muted);display:flex;flex-direction:column;gap:6px}
+.input, textarea, select{width:100%;padding:9px 10px;border-radius:10px;border:1px solid var(--border);background:rgba(0,0,0,.25);color:var(--text);font-size:13px;outline:none}
+.input:focus, textarea:focus, select:focus{border-color:rgba(0,217,255,.45);box-shadow:0 0 0 3px rgba(0,217,255,.15)}
+textarea{min-height:84px;resize:vertical}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.list{display:flex;flex-direction:column;gap:6px;max-height:260px;overflow:auto}
+.item{padding:9px 10px;border-radius:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.item.active{border-color:var(--accent);background:rgba(0,217,255,.12)}
+.item small{color:var(--muted);font-size:11px}
+.chip{padding:4px 7px;border-radius:999px;background:rgba(255,255,255,.08);font-size:11px;font-weight:600}
+.effect-card{padding:10px;border-radius:12px;background:rgba(255,255,255,.05);border:1px solid var(--border);display:flex;flex-direction:column;gap:6px}
+.effect-card h5{margin:0;font-size:13px}
+.effect-card p{margin:0;color:var(--muted);font-size:12px;line-height:1.4}
+.center{flex:1;display:flex;flex-direction:column;min-width:0;background:radial-gradient(1200px 600px at 50% 0%, rgba(124,58,237,.18), transparent 60%), var(--bg)}
+.preview-wrap{flex:1;display:grid;place-items:center;padding:14px;min-height:0;position:relative}
+.canvas-card{position:relative;background:#050508;border:1px solid var(--border);border-radius:16px;overflow:hidden;box-shadow:0 20px 60px rgba(0,0,0,.45), inset 0 1px 0 rgba(255,255,255,.06);display:grid;place-items:center}
+#preview{max-width:100%;max-height:100%;display:block;background:#0A0A14}
+.preview-bar{position:absolute;left:10px;right:10px;bottom:10px;display:flex;align-items:center;gap:8px;background:rgba(10,12,24,.85);border:1px solid var(--border);border-radius:12px;padding:8px 10px;backdrop-filter:blur(10px)}
+.time{font-variant-numeric:tabular-nums;font-weight:700;font-size:12px;color:var(--text)}
+.progress{flex:1;height:6px;background:rgba(255,255,255,.12);border-radius:999px;overflow:hidden;cursor:pointer}
+.progress i{display:block;height:100%;background:linear-gradient(90deg,var(--accent),var(--accent-2));width:0%}
+.right{width:340px;background:var(--panel);border-left:1px solid var(--border);display:flex;flex-direction:column;min-width:280px}
+.timeline{height:280px;border-top:1px solid var(--border);background:var(--panel);display:flex;flex-direction:column;flex-shrink:0}
+.timeline-head{display:flex;align-items:center;gap:8px;padding:8px 10px;border-bottom:1px solid var(--border)}
+.timeline-head strong{font-size:12px;letter-spacing:.08em}
+.timeline-tools{margin-left:auto;display:flex;gap:6px}
+.ruler{height:28px;position:relative;background:rgba(0,0,0,.2);border-bottom:1px solid var(--border);overflow:hidden}
+.ruler-inner{position:absolute;left:0;top:0;bottom:0;display:flex;align-items:center}
+.tick{position:absolute;top:0;bottom:0;width:1px;background:rgba(255,255,255,.12)}
+.tick.major{background:rgba(255,255,255,.22);width:1px}
+.tick span{position:absolute;top:2px;left:4px;font-size:10px;color:var(--muted);white-space:nowrap}
+.tracks{flex:1;overflow:auto;position:relative;background:linear-gradient(180deg,rgba(255,255,255,.02),transparent)}
+.track{height:48px;display:flex;border-bottom:1px solid var(--border);position:relative}
+.track-label{width:140px;flex-shrink:0;display:flex;align-items:center;gap:6px;padding:0 8px;background:rgba(0,0,0,.18);border-right:1px solid var(--border);font-size:12px;font-weight:700}
+.track-label small{color:var(--muted);font-weight:600}
+.track-lane{flex:1;position:relative;overflow:hidden}
+.clip{position:absolute;top:6px;bottom:6px;border-radius:8px;background:linear-gradient(180deg,rgba(0,217,255,.9),rgba(124,58,237,.9));border:1px solid rgba(255,255,255,.2);color:white;font-size:11px;font-weight:800;display:flex;align-items:center;padding:0 8px;cursor:pointer;overflow:hidden;white-space:nowrap;box-shadow:0 4px 14px rgba(0,0,0,.3)}
+.clip.selected{outline:2px solid var(--text);outline-offset:1px}
+.clip.audio{background:linear-gradient(180deg,#10B981,#059669)}
+.kf{position:absolute;top:50%;width:10px;height:10px;background:var(--text);border:2px solid #0A0A14;transform:translate(-50%,-50%) rotate(45deg);border-radius:2px;cursor:pointer}
+.playhead{position:absolute;top:0;bottom:0;width:2px;background:var(--accent);pointer-events:none;z-index:5}
+.playhead::after{content:'';position:absolute;top:0;left:50%;transform:translateX(-50%);width:10px;height:10px;background:var(--accent);border-radius:50%;border:2px solid white;box-shadow:0 2px 8px rgba(0,0,0,.4)}
+.inspector-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.kv{font-size:11px;color:var(--muted)}
+.kv strong{color:var(--text)}
+.sheet{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;place-items:center;z-index:50;padding:16px}
+.sheet.open{display:grid}
+.modal{width:min(840px,95vw);max-height:90vh;overflow:auto;background:var(--panel);border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 80px rgba(0,0,0,.6)}
+.mobile-nav{display:none;position:fixed;bottom:0;left:0;right:0;background:rgba(15,18,32,.95);backdrop-filter:blur(12px);border-top:1px solid var(--border);padding:8px;gap:8px;z-index:20}
+.mobile-nav button{flex:1}
+@media (max-width: 980px){
+  .layout{flex-direction:column}
+  .sidebar{width:100%;max-height:38vh}
+  .right{width:100%;max-height:42vh}
+  .timeline{height:220px}
+  .topbar{flex-wrap:wrap;height:auto;padding:10px}
+  .actions{width:100%;justify-content:space-between;flex-wrap:wrap}
+  .presets{margin-left:0}
+  .mobile-nav{display:flex}
+  .app{padding-bottom:56px}
+}
+.notice{padding:10px 12px;border-radius:10px;background:rgba(245,158,11,.12);border:1px solid rgba(245,158,11,.3);color:#FFD7A0;font-size:12px}
+.success{padding:10px 12px;border-radius:10px;background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.3);color:#9FF0D0;font-size:12px}
+.muted{color:var(--muted);font-size:12px}
+.divider{height:1px;background:var(--border);margin:10px 0}
+.range{width:100%}
+.hidden{display:none !important}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="topbar">
+    <div class="brand"><div class="logo">◈</div> COORDINATE <span style="color:var(--accent)">MOTION</span> <small>STUDIO v1</small> <span class="badge">LOCAL-FIRST</span></div>
+    <div class="presets">
+      <button class="pill active" id="preset-yt" onclick="setPreset('youtube')">▶ YouTube 16:9</button>
+      <button class="pill" id="preset-vert" onclick="setPreset('vertical')">📱 Vertical 9:16</button>
+    </div>
+    <div class="actions">
+      <button class="btn small" onclick="openSheet('sheet-ai')">AI Prompt</button>
+      <button class="btn small" onclick="openSheet('sheet-import')">Import</button>
+      <button class="btn small" onclick="downloadJSON()">Save JSON</button>
+      <button class="btn primary" id="exportBtn" onclick="toggleExport()">● Export</button>
+    </div>
+  </div>
+  <div class="layout">
+    <aside class="sidebar">
+      <div class="sidebar-tabs">
+        <button class="tab active" data-tab="project" onclick="switchTab('project',this)">Project</button>
+        <button class="tab" data-tab="tracks" onclick="switchTab('tracks',this)">Tracks</button>
+        <button class="tab" data-tab="effects" onclick="switchTab('effects',this)">Effects</button>
+        <button class="tab" data-tab="text" onclick="switchTab('text',this)">Add</button>
+        <button class="tab" data-tab="json" onclick="switchTab('json',this)">JSON</button>
+      </div>
+      <div class="panel">
+        <div id="panel-project">
+          <div class="panel-section">
+            <h4>Composition</h4>
+            <div class="grid2">
+              <label>Width<input id="compW" class="input" type="number" min="64" max="8192" value="1920" onchange="updateComp()"></label>
+              <label>Height<input id="compH" class="input" type="number" min="64" max="8192" value="1080" onchange="updateComp()"></label>
+              <label>FPS<select id="compFPS" class="input" onchange="updateComp()"><option>24</option><option>25</option><option selected>30</option><option>50</option><option>60</option></select></label>
+              <label>Duration (s)<input id="compDur" class="input" type="number" min="0.5" max="3600" step="0.5" value="6" onchange="updateComp()"></label>
+            </div>
+            <label>Background<input id="compBg" class="input" type="color" value="#0A0A14" onchange="updateComp()"></label>
+            <div class="row" style="margin-top:8px">
+              <button class="btn small" onclick="addTrack()">+ Track</button>
+              <button class="btn small" onclick="undo()">↩ Undo</button>
+              <button class="btn small" onclick="redo()">↪ Redo</button>
+            </div>
+            <div class="muted">Safe area: 8% margin. Particles capped at 150.</div>
+          </div>
+          <div class="panel-section">
+            <h4>Project Meta</h4>
+            <label>Title<input id="metaTitle" class="input" value="Untitled Motion"></label>
+            <label>Description<textarea id="metaDesc" placeholder="Describe project..."></textarea></label>
+          </div>
+          <div class="panel-section">
+            <h4>Quick Examples</h4>
+            <div class="grid2">
+              <button class="btn small" onclick="loadExample('animated-title')">Animated Title</button>
+              <button class="btn small" onclick="loadExample('cinematic-intro')">Cinematic</button>
+              <button class="btn small" onclick="loadExample('kinetic-typography')">Kinetic</button>
+              <button class="btn small" onclick="loadExample('logo-reveal')">Logo Reveal</button>
+              <button class="btn small" onclick="loadExample('educational-explainer')">Explainer</button>
+              <button class="btn small" onclick="loadExample('vertical-short')">Vertical Short</button>
+            </div>
+            <div class="divider"></div>
+            <div class="notice">Tip: Import AI JSON via Import sheet. All rendering is local — no data leaves browser.</div>
+          </div>
+        </div>
+        <div id="panel-tracks" class="hidden">
+          <div class="panel-section">
+            <h4>Tracks & Layers</h4>
+            <div id="trackList" class="list"></div>
+            <div class="row" style="margin-top:8px"><button class="btn small" onclick="addTrack()">+ New Track</button><button class="btn small" onclick="duplicateTrack()">Duplicate</button></div>
+          </div>
+          <div class="panel-section">
+            <h4>Objects</h4>
+            <div id="objectList" class="list"></div>
+            <div class="row" style="margin-top:8px"><button class="btn small" onclick="addObject('text')">+ Text</button><button class="btn small" onclick="addObject('rect')">+ Rect</button><button class="btn small" onclick="addObject('circle')">+ Circle</button><button class="btn small" onclick="deleteObject()">Delete</button></div>
+          </div>
+        </div>
+        <div id="panel-effects" class="hidden">
+          <div class="panel-section">
+            <h4>Effects Browser <span class="chip" id="effectCount"></span></h4>
+            <div class="row"><label style="flex:1"><input id="effectSearch" class="input" placeholder="Search effects..." oninput="renderEffects()"></label><label style="width:140px"><select id="effectFilter" class="input" onchange="renderEffects()"><option value="all">All</option><option value="implemented">Implemented only</option><option value="planned">Planned</option></select></label></div>
+            <label style="display:flex;gap:8px;align-items:center;font-size:12px"><input type="checkbox" id="showPlanned" onchange="renderEffects()"> Show planned effects</label>
+            <div id="effectsGrid" class="list" style="max-height:300px"></div>
+          </div>
+          <div class="panel-section">
+            <h4>Transitions</h4>
+            <div id="transitionsGrid" class="list"></div>
+            <div class="muted">Transitions per scene. Implemented: cut, dissolve, wipe, slide, zoom, glitch, flash.</div>
+          </div>
+        </div>
+        <div id="panel-text" class="hidden">
+          <div class="panel-section">
+            <h4>Add Text</h4>
+            <label>Content<input id="newTextContent" class="input" value="HELLO MOTION"></label>
+            <div class="grid2">
+              <label>Font Size<input id="newTextSize" class="input" type="number" value="64"></label>
+              <label>Color<input id="newTextColor" class="input" type="color" value="#FFFFFF"></label>
+            </div>
+            <div class="grid2">
+              <label>Weight<select id="newTextWeight" class="input"><option>400</option><option>600</option><option>700</option><option selected>800</option><option>900</option></select></label>
+              <label>Align<select id="newTextAlign" class="input"><option>left</option><option selected>center</option><option>right</option></select></label>
+            </div>
+            <button class="btn primary" style="width:100%;margin-top:8px" onclick="addTextFromForm()">Add Text to Timeline</button>
+          </div>
+          <div class="panel-section">
+            <h4>Add Shape</h4>
+            <div class="grid2">
+              <button class="btn small" onclick="addObject('rect')">Rectangle</button>
+              <button class="btn small" onclick="addObject('circle')">Circle</button>
+              <button class="btn small" onclick="addObject('line')">Line</button>
+              <button class="btn small" onclick="addShapeParticle()">Particles ✨</button>
+            </div>
+          </div>
+          <div class="panel-section">
+            <h4>Audio</h4>
+            <input type="file" id="audioUpload" accept="audio/*" class="input" onchange="handleAudioUpload(event)">
+            <div class="muted">Audio attaches to timeline. Export mux depends on browser.</div>
+            <div id="audioList" class="list" style="margin-top:8px"></div>
+            <div class="row" style="margin-top:8px"><label>Volume<input id="audioVol" type="range" min="0" max="1" step="0.05" value="0.9" class="range" oninput="updateAudioVol(this.value)"></label></div>
+          </div>
+        </div>
+        <div id="panel-json" class="hidden">
+          <div class="panel-section">
+            <h4>JSON Project Editor</h4>
+            <div class="row"><button class="btn small" onclick="validateProjectUI()">Validate</button><button class="btn small" onclick="formatJSON()">Format</button><button class="btn small" onclick="loadIntoEditor()">Load from State</button></div>
+            <textarea id="jsonEditor" style="min-height:260px;font-family:monospace;font-size:12px" placeholder='{"protocol":"coordinate-motion-v1", ...}'></textarea>
+            <div class="row" style="margin-top:8px"><button class="btn primary" onclick="importFromEditor()">Import JSON → Timeline</button><button class="btn" onclick="copyJSON()">Copy</button></div>
+            <div id="validateReport" style="margin-top:8px"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+    <div class="center">
+      <div class="preview-wrap" id="previewWrap">
+        <div class="canvas-card" id="canvasCard" style="width: min(920px, 95%); aspect-ratio: 16/9;">
+          <canvas id="preview" width="1920" height="1080"></canvas>
+          <div class="preview-bar">
+            <button class="btn small" id="playBtn" onclick="togglePlay()">▶ Play</button>
+            <button class="btn small" onclick="stop()">■ Stop</button>
+            <div class="time" id="timeLabel">0.00 / 6.00s</div>
+            <div class="progress" id="progress" onclick="seekByClick(event)"><i id="progressFill"></i></div>
+            <div class="time" id="fpsLabel" style="color:var(--muted)">30 FPS</div>
+            <button class="btn small" onclick="exportPNG()">PNG</button>
+          </div>
+        </div>
+      </div>
+      <div class="timeline">
+        <div class="timeline-head">
+          <strong>Timeline</strong><span class="chip" id="durationLabel">6.00s</span>
+          <div class="timeline-tools">
+            <button class="btn small" onclick="zoomTimeline(-0.2)">− Zoom</button>
+            <button class="btn small" onclick="zoomTimeline(0.2)">+ Zoom</button>
+            <button class="btn small" onclick="splitClip()">Split</button>
+            <label style="display:flex;gap:6px;align-items:center;font-size:11px"><input type="checkbox" id="snapToggle" checked> Snap</label>
+          </div>
+        </div>
+        <div class="ruler" id="ruler"></div>
+        <div class="tracks" id="tracksContainer"></div>
+      </div>
+    </div>
+    <aside class="right">
+      <div class="sidebar-tabs">
+        <button class="tab active" onclick="switchRight('props',this)">Properties</button>
+        <button class="tab" onclick="switchRight('keyframes',this)">Keyframes</button>
+        <button class="tab" onclick="switchRight('export',this)">Export</button>
+      </div>
+      <div class="panel" id="rightPanel">
+        <div id="right-props">
+          <div class="panel-section">
+            <h4>Selection</h4>
+            <div id="selectionInfo" class="muted">No object selected. Click a clip in timeline or list.</div>
+            <div id="propsForm" class="hidden">
+              <div class="grid2">
+                <label>ID<input id="p_id" class="input" disabled></label>
+                <label>Type<input id="p_type" class="input" disabled></label>
+                <label>Start (s)<input id="p_start" class="input" type="number" step="0.05" onchange="updateSelectedProp('start', parseFloat(this.value))"></label>
+                <label>Duration<input id="p_duration" class="input" type="number" step="0.1" onchange="updateSelectedProp('duration', parseFloat(this.value))"></label>
+                <label>Track<select id="p_track" class="input" onchange="updateSelectedProp('trackId', this.value)"></select></label>
+                <label>Scene<select id="p_scene" class="input" onchange="updateSelectedProp('sceneId', this.value)"></select></label>
+              </div>
+              <div class="divider"></div>
+              <h4 style="margin-bottom:8px">Transform</h4>
+              <div class="grid2">
+                <label>X<input id="p_x" class="input" type="number" onchange="updateSelectedVisual('x', parseFloat(this.value))"></label>
+                <label>Y<input id="p_y" class="input" type="number" onchange="updateSelectedVisual('y', parseFloat(this.value))"></label>
+                <label>Scale X<input id="p_sx" class="input" type="number" step="0.05" onchange="updateSelectedVisual('scaleX', parseFloat(this.value))"></label>
+                <label>Scale Y<input id="p_sy" class="input" type="number" step="0.05" onchange="updateSelectedVisual('scaleY', parseFloat(this.value))"></label>
+                <label>Rotation<input id="p_rot" class="input" type="number" onchange="updateSelectedVisual('rotation', parseFloat(this.value))"></label>
+                <label>Opacity<input id="p_op" class="input" type="number" min="0" max="1" step="0.05" onchange="updateSelectedVisual('opacity', parseFloat(this.value))"></label>
+              </div>
+              <div id="textProps" class="hidden">
+                <div class="divider"></div>
+                <h4>Text</h4>
+                <label>Content<input id="p_content" class="input" onchange="updateSelectedVisual('content', this.value)"></label>
+                <div class="grid2">
+                  <label>Font Size<input id="p_fs" class="input" type="number" onchange="updateSelectedVisual('fontSize', parseFloat(this.value))"></label>
+                  <label>Fill<input id="p_fill" class="input" type="color" onchange="updateSelectedVisual('fill', this.value)"></label>
+                  <label>Font<select id="p_ff" class="input" onchange="updateSelectedVisual('fontFamily', this.value)"><option>Inter</option><option>Arial</option><option>Helvetica</option><option>Times New Roman</option><option>Courier New</option><option>Arial Black</option></select></label>
+                  <label>Weight<select id="p_fw" class="input" onchange="updateSelectedVisual('fontWeight', this.value)"><option>400</option><option>600</option><option>700</option><option>800</option><option>900</option></select></label>
+                </div>
+                <div class="grid2">
+                  <label>Align<select id="p_align" class="input" onchange="updateSelectedVisual('align', this.value)"><option>left</option><option>center</option><option>right</option></select></label>
+                  <label>Letter Spacing<input id="p_ls" class="input" type="number" onchange="updateSelectedVisual('letterSpacing', parseFloat(this.value))"></label>
+                </div>
+              </div>
+              <div id="shapeProps" class="hidden">
+                <div class="divider"></div>
+                <h4>Shape</h4>
+                <div class="grid2">
+                  <label>Width<input id="p_w" class="input" type="number" onchange="updateSelectedVisual('width', parseFloat(this.value))"></label>
+                  <label>Height<input id="p_h" class="input" type="number" onchange="updateSelectedVisual('height', parseFloat(this.value))"></label>
+                  <label>Radius<input id="p_rad" class="input" type="number" onchange="updateSelectedVisual('radius', parseFloat(this.value))"></label>
+                  <label>Fill<input id="p_sfill" class="input" type="color" onchange="updateSelectedVisual('fill', this.value)"></label>
+                </div>
+              </div>
+              <div class="divider"></div>
+              <div class="row"><button class="btn small" onclick="addKeyframeForSelected()">+ Keyframe at Playhead</button><button class="btn small" onclick="centerSelected()">Center</button></div>
+              <div id="objectEffects" style="margin-top:8px"></div>
+            </div>
+          </div>
+        </div>
+        <div id="right-keyframes" class="hidden">
+          <div class="panel-section">
+            <h4>Keyframes</h4>
+            <div class="muted">Times are absolute project seconds. Click diamond to edit.</div>
+            <div id="kfList" class="list" style="margin-top:8px"></div>
+            <div class="divider"></div>
+            <div class="row"><label>Time<input id="kfTime" class="input" type="number" step="0.05"></label><label>Easing<select id="kfEase" class="input"><option>linear</option><option>easeInQuad</option><option>easeOutQuad</option><option>easeInOutQuad</option><option>easeInCubic</option><option selected>easeOutCubic</option><option>easeInOutCubic</option><option>easeInQuart</option><option>easeOutQuart</option><option>easeInQuint</option><option>easeOutQuint</option><option>easeInBack</option><option>easeOutBack</option><option>bounce</option><option>elastic</option><option>easeOutExpo</option></select></label></div>
+            <div class="row"><button class="btn small" onclick="updateKeyframe()">Update</button><button class="btn small" onclick="deleteKeyframe()">Delete</button></div>
+          </div>
+        </div>
+        <div id="right-export" class="hidden">
+          <div class="panel-section">
+            <h4>Export Video</h4>
+            <div class="grid2">
+              <label>Format<select id="expFormat" class="input"><option value="webm" selected>WebM</option><option value="webm-vp8">WebM VP8</option><option value="png">PNG Frame</option></select></label>
+              <label>Quality<select id="expQuality" class="input"><option>high</option><option>medium</option><option>low</option></select></label>
+              <label>Bitrate<select id="expBitrate" class="input"><option value="2500000">2.5 Mbps</option><option value="5000000" selected>5 Mbps</option><option value="8000000">8 Mbps</option></select></label>
+              <label>Filename<input id="expName" class="input" value="coordinate-motion.webm"></label>
+            </div>
+            <div class="notice" id="exportSupport"></div>
+            <div class="row" style="margin-top:10px"><button class="btn primary" style="flex:1" onclick="startRecording()">● Record Video</button><button class="btn" onclick="stopRecording()">Stop</button></div>
+            <div id="exportProgress" class="muted" style="margin-top:8px"></div>
+            <div class="divider"></div>
+            <div class="muted">Uses <code>canvas.captureStream + MediaRecorder</code>. PNG fallback always works. No paid API.</div>
+          </div>
+          <div class="panel-section">
+            <h4>Render Settings</h4>
+            <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="halfRes" onchange="updateCanvasScale()"> Half-res preview</label>
+            <label style="display:flex;gap:8px;align-items:center"><input type="checkbox" id="showSafe" onchange="render()"> Show safe areas</label>
+          </div>
+        </div>
+      </div>
+    </aside>
+  </div>
+</div>
+<div class="mobile-nav">
+  <button class="btn small" onclick="openSheet('sheet-import')">Import</button>
+  <button class="btn small" onclick="togglePlay()" id="mPlay">▶</button>
+  <button class="btn small" onclick="openSheet('sheet-ai')">AI</button>
+  <button class="btn primary" onclick="toggleExport()">Export</button>
+</div>
+<div class="sheet" id="sheet-import">
+  <div class="modal">
+    <div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><strong>Import Project</strong><button class="btn small" onclick="closeSheet('sheet-import')">✕</button></div>
+    <div style="padding:14px">
+      <div class="notice">Paste JSON from AI, upload file, or drag-drop onto canvas.</div>
+      <div class="grid2" style="margin-top:10px">
+        <button class="btn" onclick="document.getElementById('fileInput').click()">📁 Upload JSON</button>
+        <button class="btn" onclick="pasteFromClipboard()">📋 Paste Clipboard</button>
+      </div>
+      <input type="file" id="fileInput" accept=".json,application/json" style="display:none" onchange="handleFile(event)">
+      <label style="margin-top:10px;display:block">Or paste JSON:<textarea id="importArea" style="min-height:180px;font-family:monospace;font-size:12px" placeholder='Paste coordinate-motion-v1 JSON...'></textarea></label>
+      <div class="row" style="margin-top:10px"><button class="btn primary" onclick="importFromArea()">Import & Render</button><button class="btn" onclick="validateFromArea()">Validate</button><button class="btn ghost" onclick="clearImport()">Clear</button></div>
+      <div id="importReport" style="margin-top:10px"></div>
+    </div>
+  </div>
+</div>
+<div class="sheet" id="sheet-ai">
+  <div class="modal">
+    <div style="padding:14px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center"><strong>AI Instructions</strong><button class="btn small" onclick="closeSheet('sheet-ai')">✕</button></div>
+    <div style="padding:14px">
+      <div class="success">Share the prompt with any LLM to generate editable JSON. Local rendering — no API needed.</div>
+      <div class="grid2" style="margin-top:12px">
+        <button class="btn primary" onclick="downloadPrompt()">⬇ Download CUSTOM_PROMPT.md</button>
+        <button class="btn" onclick="downloadSkill()">⬇ Download SKILL.md</button>
+        <button class="btn" onclick="copyPrompt()">📋 Copy Full Prompt</button>
+        <button class="btn" onclick="copyActivation()">⚡ Copy Activation</button>
+      </div>
+      <div class="row" style="margin-top:10px"><button class="btn" onclick="sharePrompt()">📤 Share via System Sheet</button><button class="btn ghost" onclick="openDocs()">📖 Docs</button></div>
+      <div class="panel-section" style="margin-top:12px">
+        <h4>How it works</h4>
+        <ol class="muted" style="line-height:1.6">
+          <li>Download <b>Custom Prompt</b> or <b>Copy</b></li>
+          <li>New chat: ChatGPT / Gemini / Grok / DeepSeek</li>
+          <li>Paste prompt — AI asks what video you want</li>
+          <li>Describe idea — AI returns JSON</li>
+          <li>Import JSON here → Edit → Export WebM</li>
+        </ol>
+      </div>
+      <div class="panel-section">
+        <h4>Short Activation Prompt</h4>
+        <textarea id="activationPrompt" readonly style="font-size:12px;min-height:80px">You are Coordinate Motion Studio AI Director (coordinate-motion-v1). Ask me what video I want, then generate a complete valid JSON project per the protocol. Respect my Vertical/YouTube preset and use only implemented effect IDs. Return JSON in a code block.</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+<script>
+let project={protocol:"coordinate-motion-v1",metadata:{title:"Untitled Motion",version:1,description:""},composition:{width:1920,height:1080,fps:30,duration:6,background:"#0A0A14"},scenes:[{id:"scene-01",name:"Main",start:0,duration:6,background:"#0A0A14"}],tracks:[{id:"track-bg",type:"graphics",name:"Background",enabled:true,locked:false},{id:"track-title",type:"text",name:"Title",enabled:true,locked:false},{id:"track-subtitle",type:"text",name:"Subtitle",enabled:true,locked:false}],objects:[{id:"obj-bg",type:"rect",trackId:"track-bg",start:0,duration:6,properties:{x:0,y:0,width:1920,height:1080,fill:"#0A0A14",opacity:1,rx:0}},{id:"obj-title",type:"text",trackId:"track-title",start:0.4,duration:4,properties:{x:960,y:460,content:"COORDINATE MOTION",fontSize:86,fontFamily:"Inter",fontWeight:800,fill:"#FFFFFF",align:"center",opacity:1,scaleX:1,scaleY:1,rotation:0,letterSpacing:0},keyframes:[{time:0.4,properties:{x:1800,opacity:0,scaleX:0.85,scaleY:0.85},easing:"easeOutCubic"},{time:1.2,properties:{x:960,opacity:1,scaleX:1,scaleY:1},easing:"easeOutCubic"}]},{id:"obj-sub",type:"text",trackId:"track-subtitle",start:1.0,duration:3.5,properties:{x:960,y:560,content:"AI-Directed Motion Graphics \u2022 Local Rendering",fontSize:18,fontFamily:"Inter",fontWeight:500,fill:"rgba(255,255,255,0.7)",align:"center",opacity:1,letterSpacing:3},keyframes:[{time:1.0,properties:{y:600,opacity:0},easing:"easeOutCubic"},{time:1.6,properties:{y:560,opacity:1},easing:"easeOutCubic"}]}],audio:[],exportSettings:{format:"webm",quality:"high"}};
+let currentTime=0,isPlaying=false,rafId=null,pxPerSec=120,zoom=1,selectedId=null,selectedKfIdx=null,history=[],future=[],mediaRecorder=null,recordedChunks=[],audioElements=[];
+const canvas=document.getElementById('preview'),ctx=canvas.getContext('2d');
+const EASING={linear:p=>p,easeInQuad:p=>p*p,easeOutQuad:p=>p*(2-p),easeInOutQuad:p=>p<.5?2*p*p:-1+(4-2*p)*p,easeInCubic:p=>p*p*p,easeOutCubic:p=>{const t=p-1;return t*t*t+1},easeInOutCubic:p=>p<.5?4*p*p*p:(p-1)*(2*p-2)*(2*p-2)+1,easeInQuart:p=>p*p*p*p,easeOutQuart:p=>1-Math.pow(1-p,4),easeInQuint:p=>p*p*p*p*p,easeOutQuint:p=>1-Math.pow(1-p,5),easeInBack:p=>{const c1=1.70158;return c1*p*p*p-c1*p*p},easeOutBack:p=>{const c1=1.70158,c3=c1+1;return 1+c3*Math.pow(p-1,3)+c1*Math.pow(p-1,2)},easeInOutBack:p=>{const c1=1.70158*1.525;return p<0.5?(Math.pow(2*p,2)*((c1+1)*2*p-c1))/2:(Math.pow(2*p-2,2)*((c1+1)*(p*2-2)+c1)+2)/2},bounce:p=>{if(p<1/2.75)return 7.5625*p*p;if(p<2/2.75){p-=1.5/2.75;return 7.5625*p*p+.75}if(p<2.5/2.75){p-=2.25/2.75;return 7.5625*p*p+.9375}p-=2.625/2.75;return 7.5625*p*p+.984375},elastic:p=>p===0?0:p===1?1:-Math.pow(2,10*p-10)*Math.sin((p*10-10.75)*(2*Math.PI)/3),easeOutElastic:p=>{const c4=(2*Math.PI)/3;return p===0?0:p===1?1:Math.pow(2,-10*p)*Math.sin((p*10-0.75)*c4)+1},easeInExpo:p=>p===0?0:Math.pow(2,10*p-10),easeOutExpo:p=>p===1?1:1-Math.pow(2,-10*p)};
+const CATALOG=[{id:"cut",name:"Hard Cut",cat:"transitions",status:"implemented",desc:"Instant",cost:"low"},{id:"cross-dissolve",name:"Cross Dissolve",cat:"transitions",status:"implemented",desc:"Opacity blend",cost:"low"},{id:"fade-to-color",name:"Fade to Color",cat:"transitions",status:"implemented",desc:"Fade through color",cost:"low"},{id:"wipe-left",name:"Wipe Left",cat:"transitions",status:"implemented",desc:"Directional wipe",cost:"low"},{id:"wipe-right",name:"Wipe Right",cat:"transitions",status:"implemented",desc:"Wipe right",cost:"low"},{id:"slide-left",name:"Slide Left",cat:"transitions",status:"implemented",desc:"Push left",cost:"low"},{id:"slide-right",name:"Slide Right",cat:"transitions",status:"implemented",desc:"Push right",cost:"low"},{id:"push-up",name:"Push Up",cat:"transitions",status:"implemented",desc:"Push up",cost:"low"},{id:"zoom-in",name:"Zoom In",cat:"transitions",status:"implemented",desc:"Scale up",cost:"low"},{id:"zoom-out",name:"Zoom Out",cat:"transitions",status:"implemented",desc:"Scale down",cost:"low"},{id:"radial-wipe",name:"Radial Wipe",cat:"transitions",status:"implemented",desc:"Clock wipe",cost:"medium"},{id:"split-reveal",name:"Split Reveal",cat:"transitions",status:"implemented",desc:"Split center",cost:"low"},{id:"blur",name:"Blur",cat:"transitions",status:"implemented",desc:"Blur blend",cost:"medium"},{id:"glitch",name:"Glitch",cat:"transitions",status:"implemented",desc:"RGB slices",cost:"medium"},{id:"flash",name:"Flash",cat:"transitions",status:"implemented",desc:"Light flash",cost:"low"},{id:"glow",name:"Glow",cat:"light",status:"implemented",desc:"Soft outer glow",cost:"medium"},{id:"drop-shadow",name:"Drop Shadow",cat:"compositing",status:"implemented",desc:"Offset shadow",cost:"low"},{id:"gradient-mesh",name:"Gradient Mesh",cat:"compositing",status:"implemented",desc:"Mesh gradient",cost:"medium"},{id:"chromatic",name:"Chromatic Aberration",cat:"distortion",status:"implemented",desc:"RGB split",cost:"low"},{id:"typewriter",name:"Typewriter",cat:"typography",status:"implemented",desc:"Char reveal",cost:"low"},{id:"tracking",name:"Tracking Expand",cat:"typography",status:"implemented",desc:"Letter spacing",cost:"low"},{id:"kinetic-slide",name:"Kinetic Slide",cat:"typography",status:"implemented",desc:"Stagger",cost:"low"},{id:"particle-confetti",name:"Confetti",cat:"particles",status:"implemented",desc:"Celebration",cost:"medium"},{id:"particle-rain",name:"Rain",cat:"particles",status:"implemented",desc:"Falling",cost:"medium"},{id:"lower-third",name:"Lower Third",cat:"ui",status:"implemented",desc:"Title bar",cost:"low"},{id:"popup-modal",name:"Popup Modal",cat:"ui",status:"implemented",desc:"Modal entrance",cost:"low"},{id:"progress-bar",name:"Progress Bar",cat:"ui",status:"implemented",desc:"Fill bar",cost:"low"},{id:"camera-shake",name:"Camera Shake",cat:"camera",status:"implemented",desc:"Random shake",cost:"low"},{id:"parallax",name:"Parallax",cat:"camera",status:"implemented",desc:"Depth layers",cost:"low"}];
+function clamp(v,a,b){return Math.max(a,Math.min(b,v))}
+function lerp(a,b,t){return a+(b-a)*t}
+function lerpColor(a,b,t){function hexToRgb(h){if(h.startsWith('rgba')||h.startsWith('rgb')){const m=h.match(/[\d.]+/g);return {r:+m[0],g:+m[1],b:+m[2],a:m[3]?+m[3]:1}} h=h.replace('#','');if(h.length===3) h=h.split('').map(c=>c+c).join('');if(h.length===8) h=h.slice(0,6);return {r:parseInt(h.slice(0,2),16),g:parseInt(h.slice(2,4),16),b:parseInt(h.slice(4,6),16),a:1}}const ca=hexToRgb(a),cb=hexToRgb(b);const r=Math.round(lerp(ca.r,cb.r,t)),g=Math.round(lerp(ca.g,cb.g,t)),bl=Math.round(lerp(ca.b,cb.b,t)),al=lerp(ca.a,cb.a,t);return `rgba(${r},${g},${bl},${al})`}
+function isColorProp(k){return k==='fill'||k==='stroke'||k==='color'}
+function getEased(p,name){const fn=EASING[name]||EASING.linear;return fn(clamp(p,0,1))}
+function pushHistory(){history.push(JSON.stringify(project));if(history.length>80) history.shift();future=[]}
+function uid(prefix){return prefix+'-'+Math.random().toString(36).slice(2,7)}
+function validateProject(p){const errs=[];if(p.protocol!=='coordinate-motion-v1') errs.push('protocol must be coordinate-motion-v1');if(!p.composition) errs.push('missing composition');else{const c=p.composition;if(c.width<64||c.width>8192) errs.push('composition.width out of range');if(c.height<64||c.height>8192) errs.push('composition.height out of range');if(c.duration<0.1||c.duration>3600) errs.push('composition.duration out of range');if(c.background && !/^#([0-9a-fA-F]{3}|[0-9a-fA-F]{6}|[0-9a-fA-F]{8})$/.test(c.background) && !c.background.startsWith('rgba')) errs.push('composition.background invalid color');}if(!p.scenes||!p.scenes.length) errs.push('scenes missing');if(!p.tracks) errs.push('tracks missing');if(!p.objects) errs.push('objects missing');const trackIds=new Set((p.tracks||[]).map(t=>t.id));(p.objects||[]).forEach(o=>{if(!trackIds.has(o.trackId)) errs.push(`object ${o.id} missing track ${o.trackId}`);if(o.start<0) errs.push(`object ${o.id} start <0`);if(o.duration<0.05) errs.push(`object ${o.id} duration too small`);(o.keyframes||[]).forEach(k=>{if(k.time<0||k.time>p.composition.duration) errs.push(`keyframe ${k.time} out of bounds in ${o.id}`);if(k.easing && !EASING[k.easing]) errs.push(`unknown easing ${k.easing}`);});});if(JSON.stringify(p).length>50*1024*1024) errs.push('project too large');return {valid:errs.length===0,errors:errs}}
+function getPropsAt(obj,t){let props={...obj.properties};if(!obj.keyframes||!obj.keyframes.length) return props;const byProp={};obj.keyframes.forEach(k=>{Object.keys(k.properties).forEach(p=>{if(!byProp[p]) byProp[p]=[];byProp[p].push(k)})});for(const prop in byProp){const kfs=byProp[prop].slice().sort((a,b)=>a.time-b.time);if(t < kfs[0].time) continue;if(t >= kfs[kfs.length-1].time){props[prop]=kfs[kfs.length-1].properties[prop];continue;}let idx=0;for(let i=0;i<kfs.length-1;i++) if(t>=kfs[i].time && t<kfs[i+1].time){idx=i;break;}const k0=kfs[idx],k1=kfs[idx+1];const pseg=(t-k0.time)/(k1.time-k0.time);const eased=getEased(pseg,k1.easing||k0.easing||'linear');const a=k0.properties[prop],b=k1.properties[prop];if(typeof a==='number'&&typeof b==='number') props[prop]=lerp(a,b,eased);else if(isColorProp(prop)){try{props[prop]=lerpColor(a,b,eased)}catch{props[prop]=eased<0.5?a:b}}else props[prop]=eased<0.5?a:b;}return props}
+function hashCode(s){let h=0;for(let i=0;i<s.length;i++) h=Math.imul(31,h)+s.charCodeAt(i)|0;return h>>>0}
+function mulberry32(a){return function(){let t=a+=0x6D2B79F5;t=Math.imul(t^t>>>15,t|1);t^=t+Math.imul(t^t>>>7,t|61);return ((t^t>>>14)>>>0)/4294967296}}
+function drawObject(obj,t){const p=getPropsAt(obj,t);const x=p.x??0,y=p.y??0,opacity=p.opacity??1,rotation=p.rotation??0,sx=p.scaleX??1,sy=p.scaleY??1;ctx.save();ctx.globalAlpha=clamp(opacity,0,1);const hasShadow=(obj.effects||[]).some(e=>e.id==='drop-shadow');const hasGlow=(obj.effects||[]).some(e=>e.id==='glow');if(hasShadow){ctx.shadowColor='rgba(0,0,0,0.45)';ctx.shadowBlur=12;ctx.shadowOffsetX=6;ctx.shadowOffsetY=6;}else if(hasGlow){ctx.shadowColor=p.fill||'#00D9FF';ctx.shadowBlur=16;}ctx.translate(x,y);if(rotation) ctx.rotate(rotation*Math.PI/180);ctx.scale(sx,sy);if(obj.type==='text'){const content=p.content||obj.properties.content||'';const fs=p.fontSize||24,ff=p.fontFamily||'Inter',fw=p.fontWeight||600,fill=p.fill||'#FFFFFF',align=p.align||'center',ls=p.letterSpacing??0,lh=p.lineHeight||1.1;ctx.font=`${fw} ${fs}px ${ff}, system-ui, sans-serif`;ctx.fillStyle=fill;ctx.textAlign=align;ctx.textBaseline='middle';if(ls) ctx.letterSpacing=ls+'px';const lines=content.split('\n');if(lines.length===1){ctx.fillText(content,0,0)}else{const h=fs*lh;const startY=-((lines.length-1)*h)/2;lines.forEach((line,i)=>ctx.fillText(line,0,startY+i*h))}if(p.stroke){ctx.strokeStyle=p.stroke;ctx.lineWidth=p.strokeWidth||1;ctx.strokeText(content,0,0)}}else if(obj.type==='rect'||obj.type==='shape'){const w=p.width??100,h=p.height??100,fill=p.fill||'#FFF',rx=p.rx??0;if(rx>0){const r=Math.min(rx,w/2,h/2);ctx.beginPath();if(ctx.roundRect) ctx.roundRect(0,0,w,h,r);else {ctx.moveTo(r,0);ctx.lineTo(w-r,0);ctx.quadraticCurveTo(w,0,w,r);ctx.lineTo(w,h-r);ctx.quadraticCurveTo(w,h,w-r,h);ctx.lineTo(r,h);ctx.quadraticCurveTo(0,h,0,h-r);ctx.lineTo(0,r);ctx.quadraticCurveTo(0,0,r,0);}ctx.fillStyle=fill;ctx.fill();if(p.stroke){ctx.strokeStyle=p.stroke;ctx.lineWidth=p.strokeWidth||2;ctx.stroke()}}else{ctx.fillStyle=fill;ctx.fillRect(0,0,w,h);if(p.stroke){ctx.strokeStyle=p.stroke;ctx.lineWidth=p.strokeWidth||2;ctx.strokeRect(0,0,w,h)}}}else if(obj.type==='circle'||obj.type==='ellipse'){const r=p.radius||50,fill=p.fill||'#FFF';ctx.beginPath();ctx.arc(0,0,r,0,Math.PI*2);ctx.fillStyle=fill;ctx.fill()}else if(obj.type==='line'){ctx.beginPath();ctx.moveTo(-(p.width||100)/2,0);ctx.lineTo((p.width||100)/2,0);ctx.strokeStyle=p.fill||'#FFF';ctx.lineWidth=p.strokeWidth||2;ctx.stroke()}ctx.restore();const emitter=(obj.effects||[]).find(e=>e.id==='particle-confetti'||e.id==='particle-rain'||e.id==='particle-sparkle');if(obj.type==='particle-emitter'||emitter){const count=Math.min(emitter?.params?.count||60,120);const seed=hashCode(project.metadata.title+obj.id);const rng=mulberry32(seed);for(let i=0;i<count;i++){const px=rng()*project.composition.width;const py=((t*(emitter?.params?.speed||2)*60+i*10)%project.composition.height);const sz=2+rng()*4;ctx.save();ctx.globalAlpha=0.8;ctx.fillStyle=['#00D9FF','#7C3AED','#FF3B82','#10B981'][i%4];ctx.beginPath();ctx.arc(px,py,sz,0,Math.PI*2);ctx.fill();ctx.restore()}}}
+function render(){const comp=project.composition;canvas.width=comp.width;canvas.height=comp.height;const card=document.getElementById('canvasCard');card.style.aspectRatio=comp.width+' / '+comp.height;ctx.clearRect(0,0,canvas.width,canvas.height);let bg=comp.background;const scene=project.scenes.find(s=>currentTime>=s.start&&currentTime< s.start+s.duration);if(scene&&scene.background) bg=scene.background;ctx.fillStyle=bg;ctx.fillRect(0,0,canvas.width,canvas.height);const active=project.objects.filter(o=>currentTime>=o.start&&currentTime<o.start+o.duration).sort((a,b)=>{const ta=project.tracks.findIndex(t=>t.id===a.trackId);const tb=project.tracks.findIndex(t=>t.id===b.trackId);if(ta!==tb) return ta-tb;return project.objects.indexOf(a)-project.objects.indexOf(b)});active.forEach(o=>{const track=project.tracks.find(t=>t.id===o.trackId);if(track&&track.enabled===false) return;drawObject(o,currentTime)});if(document.getElementById('showSafe')?.checked){ctx.save();ctx.strokeStyle='rgba(255,255,255,0.25)';ctx.setLineDash([8,8]);ctx.lineWidth=1;const m=0.08,x=canvas.width*m,y=canvas.height*m,w=canvas.width*(1-2*m),h=canvas.height*(1-2*m);ctx.strokeRect(x,y,w,h);ctx.restore()}document.getElementById('timeLabel').textContent=currentTime.toFixed(2)+' / '+comp.duration.toFixed(2)+'s';document.getElementById('durationLabel').textContent=comp.duration.toFixed(2)+'s';document.getElementById('fpsLabel').textContent=comp.fps+' FPS';document.getElementById('progressFill').style.width=(currentTime/comp.duration*100)+'%';updatePlayhead()}
+function updatePlayhead(){const h=document.getElementById('playhead');if(h) h.style.left=(currentTime*pxPerSec*zoom)+'px';}
+function buildRuler(){const ruler=document.getElementById('ruler');ruler.innerHTML='';const w=project.composition.duration*pxPerSec*zoom;ruler.style.width=w+'px';const inner=document.createElement('div');inner.className='ruler-inner';inner.style.width=w+'px';for(let s=0;s<=project.composition.duration;s+=0.5){const tick=document.createElement('div');tick.className='tick'+(s%1===0?' major':'');tick.style.left=(s*pxPerSec*zoom)+'px';tick.style.height=s%1===0?'100%':'50%';if(s%1===0){const lab=document.createElement('span');lab.textContent=s+'s';tick.appendChild(lab)}inner.appendChild(tick)}const ph=document.createElement('div');ph.className='playhead';ph.style.left=(currentTime*pxPerSec*zoom)+'px';inner.appendChild(ph);ruler.appendChild(inner);ruler.onclick=(e)=>{const rect=ruler.getBoundingClientRect();const x=e.clientX-rect.left+ruler.scrollLeft;currentTime=clamp(x/(pxPerSec*zoom),0,project.composition.duration);render()}}
+function renderTimeline(){buildRuler();const container=document.getElementById('tracksContainer');container.innerHTML='';const w=project.composition.duration*pxPerSec*zoom;container.style.width=w+'px';container.style.position='relative';project.tracks.forEach(track=>{const trackEl=document.createElement('div');trackEl.className='track';const label=document.createElement('div');label.className='track-label';label.innerHTML=`<span style="flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${track.name}</span> <small>${track.type}</small> <button class="btn small" style="padding:2px 6px" onclick="toggleTrack('${track.id}')">${track.enabled?'👁':'🚫'}</button>`;label.onclick=(e)=>{if(e.target.tagName!=='BUTTON') selectTrack(track.id)};const lane=document.createElement('div');lane.className='track-lane';lane.style.width=w+'px';project.objects.filter(o=>o.trackId===track.id).forEach(obj=>{const clip=document.createElement('div');clip.className='clip'+(selectedId===obj.id?' selected':'');clip.style.left=(obj.start*pxPerSec*zoom)+'px';clip.style.width=Math.max(24,obj.duration*pxPerSec*zoom)+'px';clip.textContent=obj.properties.content?obj.properties.content.slice(0,20):obj.id;clip.title=obj.id+' '+obj.start.toFixed(2)+'s → '+(obj.start+obj.duration).toFixed(2)+'s';clip.onclick=(e)=>{e.stopPropagation();selectObject(obj.id)};clip.onpointerdown=(e)=>startDragClip(e,obj);(obj.keyframes||[]).forEach((kf,idx)=>{const marker=document.createElement('div');marker.className='kf';const rel=(kf.time-obj.start)/obj.duration*100;marker.style.left=rel+'%';if(kf.time<obj.start||kf.time>obj.start+obj.duration) marker.style.display='none';marker.title=`kf ${idx}: ${kf.time}s ${kf.easing}`;marker.onclick=(e)=>{e.stopPropagation();selectObject(obj.id);selectKeyframe(idx)};clip.appendChild(marker)});lane.appendChild(clip)});trackEl.appendChild(label);trackEl.appendChild(lane);container.appendChild(trackEl)});const overlay=document.createElement('div');overlay.id='playhead';overlay.className='playhead';overlay.style.left=(currentTime*pxPerSec*zoom)+'px';overlay.style.position='absolute';overlay.style.top='0';overlay.style.bottom='0';overlay.style.pointerEvents='none';container.appendChild(overlay);let isScrubbing=false;container.onpointerdown=(e)=>{if(e.target.closest('.clip')||e.target.closest('.kf')) return;isScrubbing=true;container.setPointerCapture(e.pointerId);const rect=container.getBoundingClientRect();const x=e.clientX-rect.left+container.scrollLeft;currentTime=clamp(x/(pxPerSec*zoom),0,project.composition.duration);render()};container.onpointermove=(e)=>{if(!isScrubbing) return;const rect=container.getBoundingClientRect();const x=e.clientX-rect.left+container.scrollLeft;currentTime=clamp(x/(pxPerSec*zoom),0,project.composition.duration);render()};container.onpointerup=()=>isScrubbing=false}
+let dragClip=null,dragStartX=0,origStart=0,dragOrigKfs=null;
+function startDragClip(e,obj){e.preventDefault();e.stopPropagation();selectObject(obj.id);dragClip=obj;dragStartX=e.clientX;origStart=obj.start;dragOrigKfs=(obj.keyframes||[]).map(k=>({...k,_t:k.time}));const onMove=(ev)=>{const dx=(ev.clientX-dragStartX)/(pxPerSec*zoom);let ns=origStart+dx;if(document.getElementById('snapToggle').checked) ns=Math.round(ns*10)/10;ns=clamp(ns,0,project.composition.duration-dragClip.duration);const delta=ns-origStart;dragClip.start=ns;dragClip.keyframes?.forEach((k,i)=>k.time=dragOrigKfs[i]._t+delta);renderTimeline();render()};const onUp=()=>{pushHistory();window.removeEventListener('pointermove',onMove);window.removeEventListener('pointerup',onUp);dragClip=null};window.addEventListener('pointermove',onMove);window.addEventListener('pointerup',onUp)}
+function selectObject(id){selectedId=id;selectedKfIdx=null;renderTimeline();updateProps();updateKeyframeList()}
+function selectTrack(id){const obj=project.objects.find(o=>o.trackId===id);if(obj) selectObject(obj.id)}
+function toHex(c){if(!c) return '#FFFFFF';if(c.startsWith('#')) return c.slice(0,7);if(c.startsWith('rgba')||c.startsWith('rgb')){const m=c.match(/[\d.]+/g);if(!m) return '#FFFFFF';const r=(+m[0]).toString(16).padStart(2,'0'),g=(+m[1]).toString(16).padStart(2,'0'),b=(+m[2]).toString(16).padStart(2,'0');return `#${r}${g}${b}`}return '#FFFFFF'}
+function updateProps(){const info=document.getElementById('selectionInfo'),form=document.getElementById('propsForm');if(!selectedId){info.textContent='No object selected. Click a clip.';form.classList.add('hidden');return;}const obj=project.objects.find(o=>o.id===selectedId);if(!obj){form.classList.add('hidden');return;}info.textContent=`Selected: ${obj.id} \u2022 ${obj.type} \u2022 ${obj.trackId}`;form.classList.remove('hidden');document.getElementById('p_id').value=obj.id;document.getElementById('p_type').value=obj.type;document.getElementById('p_start').value=obj.start;document.getElementById('p_duration').value=obj.duration;const selTrack=document.getElementById('p_track');selTrack.innerHTML='';project.tracks.forEach(t=>{const o=document.createElement('option');o.value=t.id;o.textContent=t.name;if(t.id===obj.trackId) o.selected=true;selTrack.appendChild(o)});const selScene=document.getElementById('p_scene');selScene.innerHTML='<option value="">(none)</option>';project.scenes.forEach(s=>{const o=document.createElement('option');o.value=s.id;o.textContent=s.id;if(s.id===obj.sceneId) o.selected=true;selScene.appendChild(o)});const p=getPropsAt(obj,currentTime);document.getElementById('p_x').value=obj.properties.x??p.x??0;document.getElementById('p_y').value=obj.properties.y??p.y??0;document.getElementById('p_sx').value=obj.properties.scaleX??1;document.getElementById('p_sy').value=obj.properties.scaleY??1;document.getElementById('p_rot').value=obj.properties.rotation??0;document.getElementById('p_op').value=obj.properties.opacity??1;const isText=obj.type==='text';document.getElementById('textProps').classList.toggle('hidden',!isText);if(isText){document.getElementById('p_content').value=obj.properties.content||'';document.getElementById('p_fs').value=obj.properties.fontSize||24;document.getElementById('p_fill').value=toHex(obj.properties.fill||'#FFFFFF');document.getElementById('p_ff').value=obj.properties.fontFamily||'Inter';document.getElementById('p_fw').value=obj.properties.fontWeight||600;document.getElementById('p_align').value=obj.properties.align||'center';document.getElementById('p_ls').value=obj.properties.letterSpacing||0}const isShape=['rect','circle','shape','ellipse'].includes(obj.type);document.getElementById('shapeProps').classList.toggle('hidden',!isShape);if(isShape){document.getElementById('p_w').value=obj.properties.width||100;document.getElementById('p_h').value=obj.properties.height||100;document.getElementById('p_rad').value=obj.properties.radius||obj.properties.rx||0;document.getElementById('p_sfill').value=toHex(obj.properties.fill||'#FFFFFF')}const effDiv=document.getElementById('objectEffects');effDiv.innerHTML='';if(obj.effects&&obj.effects.length){effDiv.innerHTML='<h4>Applied Effects</h4>';obj.effects.forEach((e,i)=>{const d=document.createElement('div');d.className='item';d.innerHTML=`<span>${e.id}</span><button class="btn small" onclick="removeEffect('${obj.id}',${i})">Remove</button>`;effDiv.appendChild(d)})}}
+function updateSelectedProp(key,val){if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);if(!obj) return;pushHistory();if(key==='start'||key==='duration') obj[key]=val;else if(key==='trackId') obj.trackId=val;else if(key==='sceneId') obj.sceneId=val;renderTimeline();render()}
+function updateSelectedVisual(key,val){if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);if(!obj) return;pushHistory();obj.properties[key]=val;render();renderTimeline()}
+function centerSelected(){if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);obj.properties.x=project.composition.width/2;obj.properties.y=project.composition.height/2;pushHistory();render();updateProps()}
+function addKeyframeForSelected(){if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);if(!obj.keyframes) obj.keyframes=[];const props={...obj.properties};const kfProps={};['x','y','opacity','scaleX','scaleY','rotation'].forEach(k=>{if(props[k]!==undefined) kfProps[k]=props[k]});obj.keyframes.push({time:clamp(currentTime,0,project.composition.duration),properties:kfProps,easing:document.getElementById('kfEase')?.value||'easeOutCubic'});obj.keyframes.sort((a,b)=>a.time-b.time);pushHistory();renderTimeline();render();updateKeyframeList()}
+function updateKeyframeList(){const list=document.getElementById('kfList');list.innerHTML='';if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);(obj.keyframes||[]).forEach((kf,i)=>{const el=document.createElement('div');el.className='item'+(selectedKfIdx===i?' active':'');el.innerHTML=`<span><strong>${kf.time.toFixed(2)}s</strong> <small>${kf.easing}</small> <small>${Object.keys(kf.properties).join(', ')}</small></span><button class="btn small" onclick="selectKeyframe(${i})">Edit</button>`;list.appendChild(el)})}
+function selectKeyframe(idx){selectedKfIdx=idx;const obj=project.objects.find(o=>o.id===selectedId);const kf=obj.keyframes[idx];document.getElementById('kfTime').value=kf.time;document.getElementById('kfEase').value=kf.easing||'easeOutCubic';updateKeyframeList();switchRight('keyframes',document.querySelector('[onclick*="keyframes"]'))}
+function updateKeyframe(){if(selectedId==null||selectedKfIdx==null) return;const obj=project.objects.find(o=>o.id===selectedId);obj.keyframes[selectedKfIdx].time=parseFloat(document.getElementById('kfTime').value);obj.keyframes[selectedKfIdx].easing=document.getElementById('kfEase').value;pushHistory();renderTimeline();render();updateKeyframeList()}
+function deleteKeyframe(){if(selectedId==null||selectedKfIdx==null) return;const obj=project.objects.find(o=>o.id===selectedId);obj.keyframes.splice(selectedKfIdx,1);selectedKfIdx=null;pushHistory();renderTimeline();render();updateKeyframeList()}
+function removeEffect(objId,idx){const obj=project.objects.find(o=>o.id===objId);obj.effects.splice(idx,1);pushHistory();updateProps();render()}
+function addTrack(){pushHistory();const id=uid('track');project.tracks.push({id,type:'graphics',name:'Track '+(project.tracks.length+1),enabled:true,locked:false});renderTimeline();renderTrackList()}
+function duplicateTrack(){if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);const track=project.tracks.find(t=>t.id===obj.trackId);if(!track) return;pushHistory();const nid=uid('track');project.tracks.push({...track,id:nid,name:track.name+' copy'});renderTrackList();renderTimeline()}
+function toggleTrack(id){const t=project.tracks.find(x=>x.id===id);t.enabled=!t.enabled;renderTimeline();renderTrackList();render()}
+function renderTrackList(){const el=document.getElementById('trackList');el.innerHTML='';project.tracks.forEach(t=>{const row=document.createElement('div');row.className='item';row.innerHTML=`<span><strong>${t.name}</strong> <small>${t.id} \u2022 ${t.type}</small></span><span>${t.enabled?'👁':'🚫'}</span>`;el.appendChild(row)});const ol=document.getElementById('objectList');ol.innerHTML='';project.objects.forEach(o=>{const row=document.createElement('div');row.className='item'+(selectedId===o.id?' active':'');row.innerHTML=`<span><strong>${o.id}</strong> <small>${o.type} \u2022 ${o.trackId}</small></span><button class="btn small" onclick="selectObject('${o.id}')">Select</button>`;ol.appendChild(row)})}
+function addObject(type){pushHistory();const trackId=project.tracks[0]?.id||(addTrack(),project.tracks[0].id);const id=uid('obj');let props={x:project.composition.width/2,y:project.composition.height/2,opacity:1,scaleX:1,scaleY:1,rotation:0};if(type==='text') props={...props,content:'NEW TEXT',fontSize:48,fontFamily:'Inter',fontWeight:700,fill:'#FFFFFF',align:'center'};else if(type==='rect') props={...props,x:project.composition.width/2-100,y:project.composition.height/2-50,width:200,height:100,fill:'#00D9FF',rx:12};else if(type==='circle') props={...props,radius:60,fill:'#7C3AED'};project.objects.push({id,type,trackId,start:currentTime,duration:Math.min(3,project.composition.duration-currentTime),properties:props,keyframes:[]});selectObject(id);renderTimeline();renderTrackList();render()}
+function addTextFromForm(){const content=document.getElementById('newTextContent').value||'TEXT';const fs=parseInt(document.getElementById('newTextSize').value)||48;const color=document.getElementById('newTextColor').value||'#FFFFFF';const w=document.getElementById('newTextWeight').value||'700';const align=document.getElementById('newTextAlign').value||'center';pushHistory();const id=uid('txt');const trackId=project.tracks.find(t=>t.type==='text')?.id||project.tracks[0].id;project.objects.push({id,type:'text',trackId,start:currentTime,duration:3,properties:{x:project.composition.width/2,y:project.composition.height/2,content,fontSize:fs,fontFamily:'Inter',fontWeight:parseInt(w),fill:color,align,opacity:1,scaleX:1,scaleY:1},keyframes:[{time:currentTime,properties:{opacity:0,scaleX:0.9,scaleY:0.9},easing:'easeOutCubic'},{time:currentTime+0.5,properties:{opacity:1,scaleX:1,scaleY:1},easing:'easeOutCubic'}]});selectObject(id);renderTimeline();renderTrackList();render()}
+function addShapeParticle(){pushHistory();const id=uid('pt');const trackId=project.tracks[0].id;project.objects.push({id,type:'particle-emitter',trackId,start:0,duration:project.composition.duration,properties:{x:0,y:0},effects:[{id:'particle-confetti',params:{count:80}}],keyframes:[]});renderTimeline();render()}
+function deleteObject(){if(!selectedId) return;pushHistory();project.objects=project.objects.filter(o=>o.id!==selectedId);selectedId=null;renderTimeline();renderTrackList();render();updateProps()}
+function togglePlay(){isPlaying=!isPlaying;document.getElementById('playBtn').textContent=isPlaying?'⏸ Pause':'▶ Play';document.getElementById('mPlay').textContent=isPlaying?'⏸':'▶';if(isPlaying) playLoop();else cancelAnimationFrame(rafId)}
+function playLoop(){if(!isPlaying) return;const fps=project.composition.fps;currentTime+=1/fps;if(currentTime>project.composition.duration){currentTime=project.composition.duration;togglePlay()}render();rafId=requestAnimationFrame(()=>setTimeout(playLoop,1000/fps))}
+function stop(){isPlaying=false;currentTime=0;document.getElementById('playBtn').textContent='▶ Play';render()}
+function seekByClick(e){const rect=e.currentTarget.getBoundingClientRect();const p=(e.clientX-rect.left)/rect.width;currentTime=p*project.composition.duration;render()}
+function updateComp(){pushHistory();project.composition.width=parseInt(document.getElementById('compW').value)||1920;project.composition.height=parseInt(document.getElementById('compH').value)||1080;project.composition.fps=parseInt(document.getElementById('compFPS').value)||30;project.composition.duration=parseFloat(document.getElementById('compDur').value)||6;project.composition.background=document.getElementById('compBg').value||'#0A0A14';project.scenes.forEach(s=>s.duration=project.composition.duration);renderTimeline();renderTrackList();render()}
+function setPreset(kind){pushHistory();document.getElementById('preset-yt').classList.toggle('active',kind==='youtube');document.getElementById('preset-vert').classList.toggle('active',kind==='vertical');if(kind==='vertical'){project.composition.width=1080;project.composition.height=1920}else{project.composition.width=1920;project.composition.height=1080}document.getElementById('compW').value=project.composition.width;document.getElementById('compH').value=project.composition.height;renderTimeline();render()}
+function updateCanvasScale(){render()}
+function zoomTimeline(delta){pxPerSec=clamp(pxPerSec*(1+delta),30,400);renderTimeline()}
+function splitClip(){if(!selectedId) return;const obj=project.objects.find(o=>o.id===selectedId);const mid=obj.start+obj.duration/2;if(mid<=obj.start+0.2||mid>=obj.start+obj.duration-0.2) return;pushHistory();const clone={...JSON.parse(JSON.stringify(obj)),id:uid('obj')};obj.duration=mid-obj.start;clone.start=mid;clone.duration=obj.duration;obj.keyframes=(obj.keyframes||[]).filter(k=>k.time<mid);clone.keyframes=(clone.keyframes||[]).filter(k=>k.time>=mid);project.objects.push(clone);renderTimeline();renderTrackList()}
+function handleFile(e){const file=e.target.files[0];if(!file) return;if(file.size>50*1024*1024){alert('File too large');return}const reader=new FileReader();reader.onload=()=>importJSONText(reader.result,document.getElementById('importReport'));reader.readAsText(file)}
+function importJSONText(text,reportEl){try{const parsed=JSON.parse(text);const v=validateProject(parsed);if(!v.valid){reportEl.innerHTML='<div class="notice">'+v.errors.map(e=>'• '+e).join('<br>')+'</div>';return}pushHistory();project=parsed;if(!project.audio) project.audio=[];if(!project.exportSettings) project.exportSettings={format:'webm',quality:'high'};document.getElementById('compW').value=project.composition.width;document.getElementById('compH').value=project.composition.height;document.getElementById('compFPS').value=project.composition.fps;document.getElementById('compDur').value=project.composition.duration;document.getElementById('compBg').value=project.composition.background.startsWith('#')?project.composition.background:'#0A0A14';document.getElementById('metaTitle').value=project.metadata.title||'Untitled';currentTime=0;selectedId=null;reportEl.innerHTML='<div class="success">✓ Imported & validated. Rendering...</div>';renderTimeline();renderTrackList();render();updateProps();closeSheet('sheet-import')}catch(err){reportEl.innerHTML='<div class="notice">Parse error: '+err.message+'</div>'}}
+function importFromArea(){const t=document.getElementById('importArea').value.trim();if(!t) return alert('Paste JSON first');importJSONText(t,document.getElementById('importReport'))}
+function validateFromArea(){const t=document.getElementById('importArea').value.trim();try{const p=JSON.parse(t);const v=validateProject(p);document.getElementById('importReport').innerHTML=v.valid?'<div class="success">✓ Valid — '+p.objects.length+' objects</div>':'<div class="notice">'+v.errors.join('<br>')+'</div>'}catch(e){document.getElementById('importReport').innerHTML='<div class="notice">Parse error: '+e.message+'</div>'}}
+function clearImport(){document.getElementById('importArea').value='';document.getElementById('importReport').innerHTML=''}
+function pasteFromClipboard(){navigator.clipboard.readText().then(t=>document.getElementById('importArea').value=t).catch(()=>alert('Clipboard denied'))}
+function importFromEditor(){const t=document.getElementById('jsonEditor').value.trim();if(!t) return;importJSONText(t,document.getElementById('validateReport'))}
+function validateProjectUI(){const t=document.getElementById('jsonEditor').value.trim();try{const p=JSON.parse(t);const v=validateProject(p);document.getElementById('validateReport').innerHTML=v.valid?'<div class="success">✓ Valid — ready</div>':'<div class="notice">'+v.errors.join('<br>')+'</div>'}catch(e){document.getElementById('validateReport').innerHTML='<div class="notice">Parse error: '+e.message+'</div>'}}
+function formatJSON(){try{const p=JSON.parse(document.getElementById('jsonEditor').value);document.getElementById('jsonEditor').value=JSON.stringify(p,null,2)}catch(e){alert('Invalid JSON: '+e.message)}}
+function loadIntoEditor(){document.getElementById('jsonEditor').value=JSON.stringify(project,null,2)}
+function copyJSON(){const t=document.getElementById('jsonEditor').value;navigator.clipboard.writeText(t).then(()=>alert('Copied')).catch(()=>alert('Copy failed'))}
+function downloadJSON(){const blob=new Blob([JSON.stringify(project,null,2)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=(project.metadata.title||'project').replace(/\s+/g,'-').toLowerCase()+'.json';a.click();setTimeout(()=>URL.revokeObjectURL(a.href),1000)}
+const previewWrap=document.getElementById('previewWrap');previewWrap.addEventListener('dragover',e=>{e.preventDefault();e.dataTransfer.dropEffect='copy'});previewWrap.addEventListener('drop',e=>{e.preventDefault();const file=e.dataTransfer.files[0];if(!file) return;const r=new FileReader();r.onload=()=>importJSONText(r.result,{innerHTML:''});r.readAsText(file)});
+function switchTab(id,btn){['project','tracks','effects','text','json'].forEach(k=>document.getElementById('panel-'+k).classList.toggle('hidden',k!==id));document.querySelectorAll('.sidebar .tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');if(id==='tracks') renderTrackList();if(id==='effects') renderEffects();if(id==='json') loadIntoEditor()}
+function switchRight(id,btn){document.getElementById('right-props').classList.toggle('hidden',id!=='props');document.getElementById('right-keyframes').classList.toggle('hidden',id!=='keyframes');document.getElementById('right-export').classList.toggle('hidden',id!=='export');document.querySelectorAll('.right .tab').forEach(b=>b.classList.remove('active'));if(btn) btn.classList.add('active');if(id==='export') checkExportSupport()}
+function openSheet(id){document.getElementById(id).classList.add('open')}
+function closeSheet(id){document.getElementById(id).classList.remove('open')}
+function toggleExport(){switchRight('export',document.querySelector('.right .tab:nth-child(3)'));document.querySelector('.right').scrollIntoView({behavior:'smooth'})}
+function renderEffects(){const q=(document.getElementById('effectSearch').value||'').toLowerCase();const filter=document.getElementById('effectFilter').value;const showPlanned=document.getElementById('showPlanned').checked;const grid=document.getElementById('effectsGrid');grid.innerHTML='';let list=CATALOG.filter(c=>{if(!showPlanned&&c.status==='planned') return false;if(filter==='implemented'&&c.status!=='implemented') return false;if(filter==='planned'&&c.status!=='planned') return false;if(q&&!(c.name.toLowerCase().includes(q)||c.id.includes(q)||c.desc.toLowerCase().includes(q))) return false;return true});document.getElementById('effectCount').textContent=list.length+' effects';list.forEach(e=>{const card=document.createElement('div');card.className='effect-card';card.innerHTML=`<div style="display:flex;justify-content:space-between;align-items:center"><h5>${e.name}</h5><span class="chip">${e.status}</span></div><p>${e.desc} \u2022 ${e.cat} \u2022 ${e.cost}</p><div class="row"><span class="kv"><strong>${e.id}</strong></span><button class="btn small" onclick="applyEffect('${e.id}')">Apply</button></div>`;grid.appendChild(card)});const tg=document.getElementById('transitionsGrid');tg.innerHTML='';CATALOG.filter(c=>c.cat==='transitions').forEach(t=>{const el=document.createElement('div');el.className='item';el.innerHTML=`<span>${t.name} <small>${t.id}</small></span><button class="btn small" onclick="setTransition('${t.id}')">Use</button>`;tg.appendChild(el)})}
+function applyEffect(id){if(!selectedId) return alert('Select object');const obj=project.objects.find(o=>o.id===selectedId);if(!obj.effects) obj.effects=[];if(obj.effects.some(e=>e.id===id)) return alert('Already applied');const cat=CATALOG.find(c=>c.id===id);if(cat&&cat.status==='planned') return alert('Planned — fallback');pushHistory();obj.effects.push({id,enabled:true,params:{}});updateProps();render()}
+function setTransition(id){if(!project.scenes[0]) return;project.scenes[0].transitionOut={type:id,duration:0.5,easing:'easeInOutCubic'};alert('Transition: '+id)}
+function checkExportSupport(){const el=document.getElementById('exportSupport');const hasCapture=!!HTMLCanvasElement.prototype.captureStream;const hasRecorder=typeof MediaRecorder!=='undefined';let mime='video/webm;codecs=vp9';let supported=false;if(hasRecorder){if(MediaRecorder.isTypeSupported(mime)) supported=true;else if(MediaRecorder.isTypeSupported('video/webm;codecs=vp8')){mime='video/webm;codecs=vp8';supported=true}else if(MediaRecorder.isTypeSupported('video/webm')){mime='video/webm';supported=true}}if(!hasCapture||!hasRecorder){el.innerHTML='<div class="notice">⚠ Browser may not support captureStream/MediaRecorder. Use Chrome/Edge/Firefox. PNG always works.</div>'}else{el.innerHTML=`<div class="success">✓ Ready: <code>${mime}</code></div>`}return mime}
+function exportPNG(){const data=canvas.toDataURL('image/png');const a=document.createElement('a');a.href=data;a.download='frame-'+currentTime.toFixed(2)+'s.png';a.click()}
+async function startRecording(){const mime=checkExportSupport();const fps=project.composition.fps;const stream=canvas.captureStream(fps);const bitrate=parseInt(document.getElementById('expBitrate').value)||5000000;let options={mimeType:mime};try{recordedChunks=[];mediaRecorder=new MediaRecorder(stream,{mimeType:options.mimeType,videoBitsPerSecond:bitrate})}catch(e){alert('MediaRecorder not supported: '+e.message);return}mediaRecorder.ondataavailable=e=>{if(e.data.size>0) recordedChunks.push(e.data)};mediaRecorder.onstop=()=>{const blob=new Blob(recordedChunks,{type:options.mimeType});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=document.getElementById('expName').value||'coordinate-motion.webm';a.click();setTimeout(()=>URL.revokeObjectURL(url),5000);document.getElementById('exportProgress').textContent='✓ Saved '+(blob.size/1024/1024).toFixed(2)+' MB'};mediaRecorder.start(100);document.getElementById('exportProgress').textContent='● Recording... Click Stop when done.';currentTime=0;isPlaying=true;document.getElementById('playBtn').textContent='⏸ Pause';const duration=project.composition.duration;const startT=performance.now();function recordTick(){if(!isPlaying||!mediaRecorder||mediaRecorder.state==='inactive') return;const elapsed=(performance.now()-startT)/1000;currentTime=clamp(elapsed,0,duration);render();if(currentTime>=duration){stopRecording();isPlaying=false;document.getElementById('playBtn').textContent='▶ Play'}else requestAnimationFrame(recordTick)}recordTick()}
+function stopRecording(){if(mediaRecorder&&mediaRecorder.state!=='inactive') mediaRecorder.stop();isPlaying=false}
+function handleAudioUpload(e){const file=e.target.files[0];if(!file) return;const url=URL.createObjectURL(file);const audio=document.createElement('audio');audio.src=url;audio.controls=true;audio.style.width='100%';audioElements.push(audio);const list=document.getElementById('audioList');const row=document.createElement('div');row.className='item';row.innerHTML=`<span>${file.name}</span>`;row.appendChild(audio);list.appendChild(row);if(!project.audio) project.audio=[];project.audio.push({id:uid('aud'),src:file.name,start:currentTime,volume:0.9})}
+function updateAudioVol(v){audioElements.forEach(a=>a.volume=parseFloat(v))}
+async function downloadPrompt(){try{const res=await fetch('CUSTOM_PROMPT.md');let text=await res.text();if(!res.ok||text.length<500) text=document.getElementById('activationPrompt').value;const blob=new Blob([text],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CUSTOM_PROMPT.md';a.click()}catch{const blob=new Blob([document.getElementById('activationPrompt').value],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='CUSTOM_PROMPT.md';a.click()}}
+async function downloadSkill(){try{const res=await fetch('SKILL.md');let text=await res.text();if(!res.ok) text='# SKILL.md stub';const blob=new Blob([text],{type:'text/markdown'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='SKILL.md';a.click()}catch{alert('Skill download failed')}}
+function copyPrompt(){fetch('CUSTOM_PROMPT.md').then(r=>r.text()).then(t=>navigator.clipboard.writeText(t).then(()=>alert('Custom prompt copied!')).catch(()=>alert('Copy failed'))).catch(()=>navigator.clipboard.writeText(document.getElementById('activationPrompt').value))}
+function copyActivation(){const t=document.getElementById('activationPrompt').value;navigator.clipboard.writeText(t).then(()=>alert('Activation copied!')).catch(()=>alert('Copy failed'))}
+async function sharePrompt(){try{const res=await fetch('CUSTOM_PROMPT.md');const text=await res.text();const file=new File([text],'CUSTOM_PROMPT.md',{type:'text/markdown'});if(navigator.canShare&&navigator.canShare({files:[file]})){await navigator.share({title:'Coordinate Motion Prompt',text:'AI instruction',files:[file]})}else if(navigator.share){await navigator.share({title:'Coordinate Motion Prompt',text:text.slice(0,8000)})}else downloadPrompt()}catch(e){downloadPrompt()}}
+function openDocs(){window.open('README.md','_blank')}
+function undo(){if(!history.length) return;future.push(JSON.stringify(project));project=JSON.parse(history.pop());renderTimeline();renderTrackList();render();updateProps()}
+function redo(){if(!future.length) return;history.push(JSON.stringify(project));project=JSON.parse(future.pop());renderTimeline();renderTrackList();render();updateProps()}
+window.addEventListener('keydown',e=>{if((e.ctrlKey||e.metaKey)&&e.key==='z'){e.preventDefault();if(e.shiftKey) redo();else undo()}if(e.code==='Space'){e.preventDefault();togglePlay()}if(e.key==='Delete'&&selectedId&&document.activeElement.tagName!=='INPUT'&&document.activeElement.tagName!=='TEXTAREA') deleteObject()});
+async function loadExample(name){try{const res=await fetch('examples/'+name+'.json');if(!res.ok) throw new Error('not found');const text=await res.text();importJSONText(text,{innerHTML:''});}catch(e){alert('Example load failed: '+e.message)}}
+function init(){renderTimeline();renderTrackList();renderEffects();checkExportSupport();render();window.addEventListener('resize',()=>renderTimeline())}init();
+</script>
+</body>
+</html>
