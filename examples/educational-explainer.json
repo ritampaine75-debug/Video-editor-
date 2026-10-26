@@ -1,0 +1,22 @@
+{
+  "protocol":"coordinate-motion-v1",
+  "metadata":{"title":"Educational Explainer","version":1,"description":"Clean explainer with charts"},
+  "composition":{"width":1920,"height":1080,"fps":30,"duration":10,"background":"#F8FAFC"},
+  "scenes":[{"id":"scene-01","name":"Intro","start":0,"duration":5,"background":"#F8FAFC"},{"id":"scene-02","name":"Data","start":5,"duration":5,"background":"#F0F4F8"}],
+  "tracks":[
+    {"id":"track-shape","type":"shape","name":"Shapes","enabled":true},
+    {"id":"track-text","type":"text","name":"Text","enabled":true},
+    {"id":"track-ui","type":"graphics","name":"UI","enabled":true}
+  ],
+  "objects":[
+    {"id":"title-edu","type":"text","trackId":"track-text","start":0.2,"duration":4,"properties":{"x":160,"y":180,"content":"How Photosynthesis Works","fontSize":54,"fontFamily":"Inter, sans-serif","fontWeight":700,"fill":"#1E293B","align":"left","opacity":1},"keyframes":[{"time":0.2,"properties":{"x":100,"opacity":0},"easing":"easeOutCubic"},{"time":0.9,"properties":{"x":160,"opacity":1},"easing":"easeOutCubic"}]},
+    {"id":"body","type":"text","trackId":"track-text","start":0.8,"duration":4,"properties":{"x":160,"y":280,"content":"Plants convert light into chemical energy\nthrough a remarkable process.","fontSize":22,"fontFamily":"Inter, sans-serif","fontWeight":400,"fill":"#475569","align":"left","opacity":1},"keyframes":[{"time":0.8,"properties":{"opacity":0,"y":300},"easing":"easeOutCubic"},{"time":1.4,"properties":{"opacity":1,"y":280},"easing":"easeOutCubic"}]},
+    {"id":"card","type":"rect","trackId":"track-ui","start":1.0,"duration":4,"properties":{"x":1100,"y":160,"width":620,"height":380,"fill":"#FFFFFF","opacity":1,"rx":16,"stroke":"#E2E8F0","strokeWidth":1},"keyframes":[{"time":1.0,"properties":{"scaleX":0.9,"scaleY":0.9,"opacity":0},"easing":"easeOutBack"},{"time":1.6,"properties":{"scaleX":1,"scaleY":1,"opacity":1},"easing":"easeOutBack"}]},
+    {"id":"chart-title","type":"text","trackId":"track-text","start":1.4,"duration":4,"properties":{"x":1130,"y":200,"content":"OXYGEN OUTPUT","fontSize":12,"fontFamily":"Inter, sans-serif","fontWeight":700,"fill":"#64748B","align":"left","opacity":1,"letterSpacing":2},"keyframes":[{"time":1.4,"properties":{"opacity":0},"easing":"linear"},{"time":1.8,"properties":{"opacity":1},"easing":"linear"}]},
+    {"id":"bar1","type":"rect","trackId":"track-shape","start":1.8,"duration":4,"properties":{"x":1130,"y":460,"width":80,"height":40,"fill":"#00D9FF","opacity":1,"rx":6},"keyframes":[{"time":1.8,"properties":{"height":0,"y":500},"easing":"easeOutCubic"},{"time":2.4,"properties":{"height":40,"y":460},"easing":"easeOutCubic"}]},
+    {"id":"bar2","type":"rect","trackId":"track-shape","start":2.0,"duration":4,"properties":{"x":1230,"y":420,"width":80,"height":80,"fill":"#7C3AED","opacity":1,"rx":6},"keyframes":[{"time":2.0,"properties":{"height":0,"y":500},"easing":"easeOutCubic"},{"time":2.6,"properties":{"height":80,"y":420},"easing":"easeOutCubic"}]},
+    {"id":"bar3","type":"rect","trackId":"track-shape","start":2.2,"duration":4,"properties":{"x":1330,"y":380,"width":80,"height":120,"fill":"#F59E0B","opacity":1,"rx":6},"keyframes":[{"time":2.2,"properties":{"height":0,"y":500},"easing":"easeOutCubic"},{"time":2.8,"properties":{"height":120,"y":380},"easing":"easeOutCubic"}]},
+    {"id":"bar4","type":"rect","trackId":"track-shape","start":2.4,"duration":4,"properties":{"x":1430,"y":400,"width":80,"height":100,"fill":"#10B981","opacity":1,"rx":6},"keyframes":[{"time":2.4,"properties":{"height":0,"y":500},"easing":"easeOutCubic"},{"time":3.0,"properties":{"height":100,"y":400},"easing":"easeOutCubic"}]}
+  ],
+  "exportSettings":{"format":"webm","quality":"high"}
+}

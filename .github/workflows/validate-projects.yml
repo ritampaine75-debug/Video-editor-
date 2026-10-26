@@ -1,0 +1,44 @@
+name: Validate Projects
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+      - name: Validate JSON syntax
+        run: |
+          echo "Checking JSON validity..."
+          for f in schemas/*.json data/*.json examples/*.json; do
+            echo "Validating $f"
+            node -e "JSON.parse(require('fs').readFileSync('$f','utf8')); console.log('OK '+process.argv[1])" "$f"
+          done
+      - name: Check protocol compliance
+        run: |
+          node << 'JS'
+          const fs=require('fs');
+          const path=require('path');
+          const examples=fs.readdirSync('examples').filter(f=>f.endsWith('.json'));
+          let ok=true;
+          for(const f of examples){
+            const j=JSON.parse(fs.readFileSync(path.join('examples',f),'utf8'));
+            if(j.protocol!=='coordinate-motion-v1'){ console.error(f+': bad protocol'); ok=false; }
+            if(!j.composition||!j.scenes||!j.tracks||!j.objects){ console.error(f+': missing top-level'); ok=false; }
+            if(j.composition.width<64||j.composition.height<64){ console.error(f+': bad dimensions'); ok=false; }
+            console.log(f+': protocol ok');
+          }
+          if(!ok) process.exit(1);
+          JS
+      - name: Verify catalog entries
+        run: |
+          node << 'JS'
+          const cat=JSON.parse(require('fs').readFileSync('data/motion-graphics-catalog.json','utf8'));
+          console.log('Catalog entries:', cat.effects.length);
+          if(cat.effects.length<50) { console.error('Catalog too small'); process.exit(1); }
+          JS

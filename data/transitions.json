@@ -1,0 +1,21 @@
+{
+  "transitions": [
+    {"id":"cut","name":"Hard Cut","duration":0.05,"easing":"linear","supported":true,"preview":"cut"},
+    {"id":"cross-dissolve","name":"Cross Dissolve","duration":0.5,"easing":"easeInOutQuad","supported":true},
+    {"id":"fade-to-color","name":"Fade to Color","duration":0.6,"easing":"easeInOutCubic","supported":true,"params":{"color":"#000000"}},
+    {"id":"wipe-left","name":"Wipe Left","duration":0.5,"easing":"easeInOutCubic","supported":true},
+    {"id":"wipe-right","name":"Wipe Right","duration":0.5,"easing":"easeInOutCubic","supported":true},
+    {"id":"slide-left","name":"Slide Left","duration":0.5,"easing":"easeOutCubic","supported":true},
+    {"id":"slide-right","name":"Slide Right","duration":0.5,"easing":"easeOutCubic","supported":true},
+    {"id":"push-up","name":"Push Up","duration":0.5,"easing":"easeInOutCubic","supported":true},
+    {"id":"push-down","name":"Push Down","duration":0.5,"easing":"easeInOutCubic","supported":true},
+    {"id":"zoom-in","name":"Zoom In","duration":0.6,"easing":"easeOutQuint","supported":true},
+    {"id":"zoom-out","name":"Zoom Out","duration":0.6,"easing":"easeOutQuint","supported":true},
+    {"id":"radial-wipe","name":"Radial Wipe","duration":0.7,"easing":"easeInOutCubic","supported":true},
+    {"id":"split-reveal","name":"Split Reveal","duration":0.6,"easing":"easeInOutQuart","supported":true},
+    {"id":"shape-reveal","name":"Shape Reveal","duration":0.8,"easing":"easeOutCubic","supported":true},
+    {"id":"blur","name":"Blur Transition","duration":0.5,"easing":"easeInOutQuad","supported":true},
+    {"id":"glitch","name":"Glitch","duration":0.4,"easing":"linear","supported":true},
+    {"id":"flash","name":"Flash","duration":0.3,"easing":"easeOutQuad","supported":true}
+  ]
+}

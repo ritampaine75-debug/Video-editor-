@@ -1,0 +1,20 @@
+{
+  "easings": [
+    {"id":"linear","name":"Linear","fn":"linear"},
+    {"id":"easeInQuad","name":"Ease In Quad"},
+    {"id":"easeOutQuad","name":"Ease Out Quad"},
+    {"id":"easeInOutQuad","name":"Ease In Out Quad"},
+    {"id":"easeInCubic","name":"Ease In Cubic"},
+    {"id":"easeOutCubic","name":"Ease Out Cubic"},
+    {"id":"easeInOutCubic","name":"Ease In Out Cubic"},
+    {"id":"easeInQuart","name":"Ease In Quart"},
+    {"id":"easeOutQuart","name":"Ease Out Quart"},
+    {"id":"easeInQuint","name":"Ease In Quint"},
+    {"id":"easeOutQuint","name":"Ease Out Quint"},
+    {"id":"easeInBack","name":"Ease In Back"},
+    {"id":"easeOutBack","name":"Ease Out Back"},
+    {"id":"bounce","name":"Bounce"},
+    {"id":"elastic","name":"Elastic"},
+    {"id":"easeOutExpo","name":"Ease Out Expo"}
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "presets": [
+    {"id":"slide-left","name":"Slide In Left","type":"entrance","duration":0.6,"easing":"easeOutCubic"},
+    {"id":"slide-right","name":"Slide In Right","type":"entrance","duration":0.6,"easing":"easeOutCubic"},
+    {"id":"slide-top","name":"Slide In Top","type":"entrance","duration":0.5,"easing":"easeOutCubic"},
+    {"id":"slide-bottom","name":"Slide In Bottom","type":"entrance","duration":0.5,"easing":"easeOutCubic"},
+    {"id":"fade","name":"Fade In","type":"entrance","duration":0.5,"easing":"easeOutQuad"},
+    {"id":"scale-reveal","name":"Scale Reveal","type":"entrance","duration":0.6,"easing":"easeOutBack"},
+    {"id":"tracking","name":"Tracking Expand","type":"entrance","duration":0.7,"easing":"easeOutCubic"},
+    {"id":"word-reveal","name":"Word by Word","type":"entrance","duration":1.2,"easing":"easeOutCubic"},
+    {"id":"char-reveal","name":"Character Reveal","type":"entrance","duration":1.0,"easing":"easeOutCubic"},
+    {"id":"typewriter","name":"Typewriter","type":"entrance","duration":1.5,"easing":"linear"},
+    {"id":"stagger","name":"Stagger Entrance","type":"entrance","duration":0.8,"easing":"easeOutCubic"},
+    {"id":"bounce","name":"Bounce In","type":"entrance","duration":0.8,"easing":"bounce"},
+    {"id":"overshoot","name":"Overshoot Settle","type":"entrance","duration":0.7,"easing":"easeOutBack"},
+    {"id":"mask-reveal","name":"Mask Reveal","type":"entrance","duration":0.6,"easing":"easeInOutCubic"},
+    {"id":"blur-focus","name":"Blur to Focus","type":"entrance","duration":0.6,"easing":"easeOutQuad"},
+    {"id":"kinetic","name":"Kinetic Sequence","type":"entrance","duration":1.0,"easing":"easeOutCubic"}
+  ]
+}

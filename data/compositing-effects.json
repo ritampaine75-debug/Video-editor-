@@ -1,0 +1,9 @@
+{
+  "effects": [
+    {"id":"drop-shadow","name":"Drop Shadow","params":{"dx":6,"dy":6,"blur":12,"color":"rgba(0,0,0,0.5)"},"status":"implemented"},
+    {"id":"glow","name":"Glow","params":{"blur":16,"color":"#00D9FF"},"status":"implemented"},
+    {"id":"gradient-mesh","name":"Gradient Mesh","params":{"colors":["#667EEA","#764BA2"]},"status":"implemented"},
+    {"id":"blur-bg","name":"Background Blur","params":{"blur":8},"status":"planned"},
+    {"id":"chromatic","name":"Chromatic Aberration","params":{"offset":3},"status":"implemented"}
+  ]
+}

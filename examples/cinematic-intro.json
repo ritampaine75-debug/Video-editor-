@@ -1,0 +1,18 @@
+{
+  "protocol": "coordinate-motion-v1",
+  "metadata": {"title": "Cinematic Intro", "version": 1, "description": "Dramatic cinematic intro with light sweep"},
+  "composition": {"width": 1920, "height": 1080, "fps": 30, "duration": 8, "background": "#050508"},
+  "scenes": [{"id":"scene-01","name":"Cinematic","start":0,"duration":8,"background":"#050508"}],
+  "tracks": [
+    {"id":"track-bg","type":"graphics","name":"Background","enabled":true},
+    {"id":"track-title","type":"text","name":"Title","enabled":true},
+    {"id":"track-card","type":"graphics","name":"Card","enabled":true}
+  ],
+  "objects": [
+    {"id":"vignette","type":"rect","trackId":"track-bg","start":0,"duration":8,"properties":{"x":0,"y":0,"width":1920,"height":1080,"fill":"#050508","opacity":1,"rx":0}},
+    {"id":"title-main","type":"text","trackId":"track-title","start":0.5,"duration":6,"properties":{"x":960,"y":480,"content":"CINEMATIC","fontSize":112,"fontFamily":"Arial Black, sans-serif","fontWeight":900,"fill":"#FFFFFF","align":"center","opacity":1,"scaleX":1,"scaleY":1,"letterSpacing":8},"keyframes":[{"time":0.5,"properties":{"scaleX":1.4,"scaleY":1.4,"opacity":0,"letterSpacing":24},"easing":"easeOutQuart"},{"time":1.6,"properties":{"scaleX":1,"scaleY":1,"opacity":1,"letterSpacing":8},"easing":"easeOutQuart"}]},
+    {"id":"subtitle-cine","type":"text","trackId":"track-title","start":1.2,"duration":5,"properties":{"x":960,"y":600,"content":"EXPERIENCE THE STORY","fontSize":20,"fontFamily":"Inter, sans-serif","fontWeight":400,"fill":"rgba(255,255,255,0.7)","align":"center","opacity":1,"letterSpacing":6},"keyframes":[{"time":1.2,"properties":{"opacity":0,"y":620},"easing":"easeOutCubic"},{"time":2.0,"properties":{"opacity":1,"y":600},"easing":"easeOutCubic"}]},
+    {"id":"line","type":"rect","trackId":"track-card","start":0.8,"duration":5,"properties":{"x":860,"y":540,"width":200,"height":2,"fill":"#FF3B30","opacity":1,"rx":1},"keyframes":[{"time":0.8,"properties":{"width":0,"opacity":0},"easing":"easeInOutCubic"},{"time":1.4,"properties":{"width":200,"opacity":1},"easing":"easeInOutCubic"}]}
+  ],
+  "exportSettings":{"format":"webm","quality":"high"}
+}

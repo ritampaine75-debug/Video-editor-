@@ -1,0 +1,14 @@
+{
+  "protocol":"coordinate-motion-v1",
+  "metadata":{"title":"Logo Reveal","version":1},
+  "composition":{"width":1920,"height":1080,"fps":30,"duration":5,"background":"#0B0B0F"},
+  "scenes":[{"id":"scene-01","name":"Reveal","start":0,"duration":5,"background":"#0B0B0F"}],
+  "tracks":[{"id":"track-logo","type":"graphics","name":"Logo","enabled":true},{"id":"track-text","type":"text","name":"Tagline","enabled":true}],
+  "objects":[
+    {"id":"circle-bg","type":"circle","trackId":"track-logo","start":0,"duration":5,"properties":{"x":960,"y":480,"radius":110,"fill":"#FFFFFF","opacity":1,"scaleX":1,"scaleY":1},"keyframes":[{"time":0,"properties":{"scaleX":0,"scaleY":0,"opacity":0},"easing":"easeOutBack"},{"time":0.7,"properties":{"scaleX":1,"scaleY":1,"opacity":1},"easing":"easeOutBack"},{"time":0.9,"properties":{"scaleX":0.95,"scaleY":0.95},"easing":"easeInOutQuad"},{"time":1.1,"properties":{"scaleX":1,"scaleY":1},"easing":"easeOutQuad"}]},
+    {"id":"logo-letter","type":"text","trackId":"track-logo","start":0.4,"duration":4,"properties":{"x":960,"y":500,"content":"◈","fontSize":96,"fontFamily":"Arial","fontWeight":900,"fill":"#0B0B0F","align":"center","opacity":1,"scaleX":1,"scaleY":1},"keyframes":[{"time":0.4,"properties":{"scaleX":0,"scaleY":0,"opacity":0},"easing":"easeOutBack"},{"time":0.9,"properties":{"scaleX":1,"scaleY":1,"opacity":1},"easing":"easeOutBack"}]},
+    {"id":"brand","type":"text","trackId":"track-text","start":1.1,"duration":3,"properties":{"x":960,"y":640,"content":"COORDINATE STUDIO","fontSize":28,"fontFamily":"Inter, sans-serif","fontWeight":800,"fill":"#FFFFFF","align":"center","opacity":1,"letterSpacing":8},"keyframes":[{"time":1.1,"properties":{"opacity":0,"y":660},"easing":"easeOutCubic"},{"time":1.7,"properties":{"opacity":1,"y":640},"easing":"easeOutCubic"}]},
+    {"id":"tagline","type":"text","trackId":"track-text","start":1.4,"duration":3,"properties":{"x":960,"y":680,"content":"Motion • Design • Story","fontSize":14,"fontFamily":"Inter, sans-serif","fontWeight":400,"fill":"rgba(255,255,255,0.6)","align":"center","opacity":1,"letterSpacing":4},"keyframes":[{"time":1.4,"properties":{"opacity":0},"easing":"easeOutQuad"},{"time":1.9,"properties":{"opacity":1},"easing":"easeOutQuad"}]}
+  ],
+  "exportSettings":{"format":"webm","quality":"high"}
+}
